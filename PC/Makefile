@@ -14,10 +14,10 @@ all: $(PROJECTS)
 
 Project: 
 	@echo "==== Building Project ($(config)) ===="
-	@${MAKE} --no-print-directory -C Project -f Makefile
+	@${MAKE} --no-print-directory -C ../Project -f Makefile
 
 clean:
-	@${MAKE} --no-print-directory -C Project -f Makefile clean
+	@${MAKE} --no-print-directory -C ../Project -f Makefile clean
 
 help:
 	@echo "Usage: make [config=name] [target]"

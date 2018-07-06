@@ -308,6 +308,7 @@ endif
 
 OBJDIRS := \
 	$(OBJDIR) \
+	$(OBJDIR)/PC/Project/dependencies/GLFW/src \
 	$(OBJDIR)/dependencies/GLFW/src \
 	$(OBJDIR)/dependencies/glew/include \
 	$(OBJDIR)/src \
@@ -358,6 +359,58 @@ $(GCH_OBJC): $(PCH) $(MAKEFILE) | $(OBJDIR)
 	$(SILENT) $(CXX) $(ALL_OBJCPPFLAGS) -x objective-c++-header $(DEFINES) $(INCLUDES) -o "$@" -c "$<"
 endif
 
+$(OBJDIR)/PC/Project/dependencies/GLFW/src/context.o: ../PC/Project/dependencies/GLFW/src/context.c $(GCH) $(MAKEFILE)
+	@echo $(notdir $<)
+	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -c "$<"
+
+$(OBJDIR)/PC/Project/dependencies/GLFW/src/glx_context.o: ../PC/Project/dependencies/GLFW/src/glx_context.c $(GCH) $(MAKEFILE)
+	@echo $(notdir $<)
+	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -c "$<"
+
+$(OBJDIR)/PC/Project/dependencies/GLFW/src/init.o: ../PC/Project/dependencies/GLFW/src/init.c $(GCH) $(MAKEFILE)
+	@echo $(notdir $<)
+	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -c "$<"
+
+$(OBJDIR)/PC/Project/dependencies/GLFW/src/input.o: ../PC/Project/dependencies/GLFW/src/input.c $(GCH) $(MAKEFILE)
+	@echo $(notdir $<)
+	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -c "$<"
+
+$(OBJDIR)/PC/Project/dependencies/GLFW/src/linux_joystick.o: ../PC/Project/dependencies/GLFW/src/linux_joystick.c $(GCH) $(MAKEFILE)
+	@echo $(notdir $<)
+	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -c "$<"
+
+$(OBJDIR)/PC/Project/dependencies/GLFW/src/monitor.o: ../PC/Project/dependencies/GLFW/src/monitor.c $(GCH) $(MAKEFILE)
+	@echo $(notdir $<)
+	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -c "$<"
+
+$(OBJDIR)/PC/Project/dependencies/GLFW/src/posix_time.o: ../PC/Project/dependencies/GLFW/src/posix_time.c $(GCH) $(MAKEFILE)
+	@echo $(notdir $<)
+	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -c "$<"
+
+$(OBJDIR)/PC/Project/dependencies/GLFW/src/posix_tls.o: ../PC/Project/dependencies/GLFW/src/posix_tls.c $(GCH) $(MAKEFILE)
+	@echo $(notdir $<)
+	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -c "$<"
+
+$(OBJDIR)/PC/Project/dependencies/GLFW/src/window.o: ../PC/Project/dependencies/GLFW/src/window.c $(GCH) $(MAKEFILE)
+	@echo $(notdir $<)
+	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -c "$<"
+
+$(OBJDIR)/PC/Project/dependencies/GLFW/src/x11_init.o: ../PC/Project/dependencies/GLFW/src/x11_init.c $(GCH) $(MAKEFILE)
+	@echo $(notdir $<)
+	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -c "$<"
+
+$(OBJDIR)/PC/Project/dependencies/GLFW/src/x11_monitor.o: ../PC/Project/dependencies/GLFW/src/x11_monitor.c $(GCH) $(MAKEFILE)
+	@echo $(notdir $<)
+	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -c "$<"
+
+$(OBJDIR)/PC/Project/dependencies/GLFW/src/x11_window.o: ../PC/Project/dependencies/GLFW/src/x11_window.c $(GCH) $(MAKEFILE)
+	@echo $(notdir $<)
+	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -c "$<"
+
+$(OBJDIR)/PC/Project/dependencies/GLFW/src/xkb_unicode.o: ../PC/Project/dependencies/GLFW/src/xkb_unicode.c $(GCH) $(MAKEFILE)
+	@echo $(notdir $<)
+	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -c "$<"
+
 $(OBJDIR)/dependencies/GLFW/src/cocoa_init.o: dependencies/GLFW/src/cocoa_init.m $(GCH_OBJC) $(MAKEFILE)
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(ALL_OBJCFLAGS) $(FORCE_INCLUDE_OBJC) -o "$@" -c "$<"
@@ -374,10 +427,6 @@ $(OBJDIR)/dependencies/GLFW/src/context.o: dependencies/GLFW/src/context.c $(GCH
 	@echo $(notdir $<)
 	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -c "$<"
 
-$(OBJDIR)/dependencies/GLFW/src/glx_context.o: dependencies/GLFW/src/glx_context.c $(GCH) $(MAKEFILE)
-	@echo $(notdir $<)
-	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -c "$<"
-
 $(OBJDIR)/dependencies/GLFW/src/init.o: dependencies/GLFW/src/init.c $(GCH) $(MAKEFILE)
 	@echo $(notdir $<)
 	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -c "$<"
@@ -390,10 +439,6 @@ $(OBJDIR)/dependencies/GLFW/src/iokit_joystick.o: dependencies/GLFW/src/iokit_jo
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(ALL_OBJCFLAGS) $(FORCE_INCLUDE_OBJC) -o "$@" -c "$<"
 
-$(OBJDIR)/dependencies/GLFW/src/linux_joystick.o: dependencies/GLFW/src/linux_joystick.c $(GCH) $(MAKEFILE)
-	@echo $(notdir $<)
-	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -c "$<"
-
 $(OBJDIR)/dependencies/GLFW/src/mach_time.o: dependencies/GLFW/src/mach_time.c $(GCH) $(MAKEFILE)
 	@echo $(notdir $<)
 	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -c "$<"
@@ -405,10 +450,6 @@ $(OBJDIR)/dependencies/GLFW/src/monitor.o: dependencies/GLFW/src/monitor.c $(GCH
 $(OBJDIR)/dependencies/GLFW/src/nsgl_context.o: dependencies/GLFW/src/nsgl_context.m $(GCH_OBJC) $(MAKEFILE)
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(ALL_OBJCFLAGS) $(FORCE_INCLUDE_OBJC) -o "$@" -c "$<"
-
-$(OBJDIR)/dependencies/GLFW/src/posix_time.o: dependencies/GLFW/src/posix_time.c $(GCH) $(MAKEFILE)
-	@echo $(notdir $<)
-	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -c "$<"
 
 $(OBJDIR)/dependencies/GLFW/src/posix_tls.o: dependencies/GLFW/src/posix_tls.c $(GCH) $(MAKEFILE)
 	@echo $(notdir $<)
@@ -443,22 +484,6 @@ $(OBJDIR)/dependencies/GLFW/src/window.o: dependencies/GLFW/src/window.c $(GCH) 
 	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -c "$<"
 
 $(OBJDIR)/dependencies/GLFW/src/winmm_joystick.o: dependencies/GLFW/src/winmm_joystick.c $(GCH) $(MAKEFILE)
-	@echo $(notdir $<)
-	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -c "$<"
-
-$(OBJDIR)/dependencies/GLFW/src/x11_init.o: dependencies/GLFW/src/x11_init.c $(GCH) $(MAKEFILE)
-	@echo $(notdir $<)
-	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -c "$<"
-
-$(OBJDIR)/dependencies/GLFW/src/x11_monitor.o: dependencies/GLFW/src/x11_monitor.c $(GCH) $(MAKEFILE)
-	@echo $(notdir $<)
-	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -c "$<"
-
-$(OBJDIR)/dependencies/GLFW/src/x11_window.o: dependencies/GLFW/src/x11_window.c $(GCH) $(MAKEFILE)
-	@echo $(notdir $<)
-	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -c "$<"
-
-$(OBJDIR)/dependencies/GLFW/src/xkb_unicode.o: dependencies/GLFW/src/xkb_unicode.c $(GCH) $(MAKEFILE)
 	@echo $(notdir $<)
 	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -c "$<"
 
