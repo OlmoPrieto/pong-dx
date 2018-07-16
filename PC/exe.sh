@@ -12,4 +12,4 @@ echo -e "\n${BLUE} -- Compiling $(DATE) --${NC}"
 
 echo -e "\n${GREEN} -- Starting execution $(DATE) --${NC}"
 
-./Project/bin/Project
+./../Project/bin/Project
