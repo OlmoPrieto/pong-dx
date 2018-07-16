@@ -74,9 +74,12 @@ ifeq ($(config),debug)
 	$(OBJDIR)/dependencies/GLFW/src/posix_tls.o \
 	$(OBJDIR)/dependencies/GLFW/src/window.o \
 	$(OBJDIR)/dependencies/glew/include/glew.o \
+	$(OBJDIR)/src/ball.o \
 	$(OBJDIR)/src/game.o \
 	$(OBJDIR)/src/main.o \
+	$(OBJDIR)/src/paddle.o \
 	$(OBJDIR)/src/sockets.o \
+	$(OBJDIR)/src/sprite.o \
 
   define PREBUILDCMDS
   endef
@@ -118,9 +121,12 @@ ifeq ($(config),release)
 	$(OBJDIR)/dependencies/GLFW/src/posix_tls.o \
 	$(OBJDIR)/dependencies/GLFW/src/window.o \
 	$(OBJDIR)/dependencies/glew/include/glew.o \
+	$(OBJDIR)/src/ball.o \
 	$(OBJDIR)/src/game.o \
 	$(OBJDIR)/src/main.o \
+	$(OBJDIR)/src/paddle.o \
 	$(OBJDIR)/src/sockets.o \
+	$(OBJDIR)/src/sprite.o \
 
   define PREBUILDCMDS
   endef
@@ -162,9 +168,12 @@ ifeq ($(config),debug64)
 	$(OBJDIR)/dependencies/GLFW/src/posix_tls.o \
 	$(OBJDIR)/dependencies/GLFW/src/window.o \
 	$(OBJDIR)/dependencies/glew/include/glew.o \
+	$(OBJDIR)/src/ball.o \
 	$(OBJDIR)/src/game.o \
 	$(OBJDIR)/src/main.o \
+	$(OBJDIR)/src/paddle.o \
 	$(OBJDIR)/src/sockets.o \
+	$(OBJDIR)/src/sprite.o \
 
   define PREBUILDCMDS
   endef
@@ -206,9 +215,12 @@ ifeq ($(config),release64)
 	$(OBJDIR)/dependencies/GLFW/src/posix_tls.o \
 	$(OBJDIR)/dependencies/GLFW/src/window.o \
 	$(OBJDIR)/dependencies/glew/include/glew.o \
+	$(OBJDIR)/src/ball.o \
 	$(OBJDIR)/src/game.o \
 	$(OBJDIR)/src/main.o \
+	$(OBJDIR)/src/paddle.o \
 	$(OBJDIR)/src/sockets.o \
+	$(OBJDIR)/src/sprite.o \
 
   define PREBUILDCMDS
   endef
@@ -250,9 +262,12 @@ ifeq ($(config),debug32)
 	$(OBJDIR)/dependencies/GLFW/src/posix_tls.o \
 	$(OBJDIR)/dependencies/GLFW/src/window.o \
 	$(OBJDIR)/dependencies/glew/include/glew.o \
+	$(OBJDIR)/src/ball.o \
 	$(OBJDIR)/src/game.o \
 	$(OBJDIR)/src/main.o \
+	$(OBJDIR)/src/paddle.o \
 	$(OBJDIR)/src/sockets.o \
+	$(OBJDIR)/src/sprite.o \
 
   define PREBUILDCMDS
   endef
@@ -294,9 +309,12 @@ ifeq ($(config),release32)
 	$(OBJDIR)/dependencies/GLFW/src/posix_tls.o \
 	$(OBJDIR)/dependencies/GLFW/src/window.o \
 	$(OBJDIR)/dependencies/glew/include/glew.o \
+	$(OBJDIR)/src/ball.o \
 	$(OBJDIR)/src/game.o \
 	$(OBJDIR)/src/main.o \
+	$(OBJDIR)/src/paddle.o \
 	$(OBJDIR)/src/sockets.o \
+	$(OBJDIR)/src/sprite.o \
 
   define PREBUILDCMDS
   endef
@@ -491,6 +509,10 @@ $(OBJDIR)/dependencies/glew/include/glew.o: dependencies/glew/include/glew.c $(G
 	@echo $(notdir $<)
 	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -c "$<"
 
+$(OBJDIR)/src/ball.o: src/ball.cpp $(GCH) $(MAKEFILE)
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -c "$<"
+
 $(OBJDIR)/src/game.o: src/game.cpp $(GCH) $(MAKEFILE)
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -c "$<"
@@ -499,7 +521,15 @@ $(OBJDIR)/src/main.o: src/main.cpp $(GCH) $(MAKEFILE)
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -c "$<"
 
+$(OBJDIR)/src/paddle.o: src/paddle.cpp $(GCH) $(MAKEFILE)
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -c "$<"
+
 $(OBJDIR)/src/sockets.o: src/sockets.cpp $(GCH) $(MAKEFILE)
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -c "$<"
+
+$(OBJDIR)/src/sprite.o: src/sprite.cpp $(GCH) $(MAKEFILE)
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -c "$<"
 

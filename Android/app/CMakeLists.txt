@@ -27,6 +27,9 @@ add_library( # Sets the name of the library.
 
              # Project related
              ../../Project/src/game.cpp
+             ../../Project/src/sprite.cpp
+             ../../Project/src/ball.cpp
+             ../../Project/src/paddle.cpp
 
              )
 

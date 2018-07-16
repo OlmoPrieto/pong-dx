@@ -15,7 +15,7 @@ typedef unsigned char byte;
 
 // GLOBAL VARIABLES
 GLFWwindow* g_window = nullptr;
-uint32_t g_window_width  = 640;
+uint32_t g_window_width  = 720;
 uint32_t g_window_height = 480;
 
 
@@ -41,6 +41,8 @@ void InitializeGraphics() {
     //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
   #endif
 
+  g_window_width = Game::m_render_width;
+  g_window_height = Game::m_render_height;
   g_window = glfwCreateWindow(g_window_width, g_window_height, "Window", NULL, NULL);
   if (!g_window) {
     glfwTerminate();

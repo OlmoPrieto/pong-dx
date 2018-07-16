@@ -2,7 +2,7 @@
 // Created by Olmo on 10/06/2018.
 //
 
-#include "../../../../../PC/Project/include/game.h"
+#include "../../../../../Project/include/game.h"
 #include <jni.h>
 
 #ifdef __cplusplus

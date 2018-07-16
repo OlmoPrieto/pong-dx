@@ -69,16 +69,28 @@ R"END(
 #endif
 R"END(
   uniform vec4 color;
-  //uniform sampler2D tex;
+  uniform sampler2D tex;
   varying vec2 o_uv;
 
   void main() {
-    gl_FragColor = color * vec4(o_uv.x, o_uv.y, 0.0, 1.0);
-    //gl_FragColor = texture2D(tex, o_uv) * color;
+    //gl_FragColor = color * vec4(o_uv.x, o_uv.y, 0.0, 1.0);
+)END"
+//#ifdef __PLATFORM_ANDROID__
+R"END(
+    gl_FragColor = texture2D(tex, o_uv) * color;
+)END"
+// #else
+// R"END(
+//     gl_FragColor = texture(tex, o_uv) * color;
+// )END"
+// #endif
+R"END(
   }
 )END";
 // ========================================================================
 
+const uint32_t Game::m_render_width = 720;
+const uint32_t Game::m_render_height = 480;
 
 Game::~Game() {
 
@@ -91,21 +103,74 @@ Game* Game::Instance() {
 }
 
 void Game::update(float dt) {
-
+  for (uint32_t i = 0; i < m_balls.size(); ++i) {
+    m_balls[i].update(16.0f);
+  }
 }
 
 void Game::draw() {
+  update(16.0f);
+
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  glUniform4f(m_color_location, 1.0f, 0.0f, 0.0f, 1.0f);
+  // [RENDER TEST]
+  // glUniform4f(m_opengl_data.m_color_location, 1.0f, 0.0f, 0.0f, 1.0f);
 
-  glBindBuffer(GL_ARRAY_BUFFER, m_vertices_index);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indices_index);
+  // glBindBuffer(GL_ARRAY_BUFFER, m_opengl_data.m_vertices_index);
+  // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_opengl_data.m_indices_index);
 
-  glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, m_indices);
+  // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, m_opengl_data.m_indices);
   
+  // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+  // glBindBuffer(GL_ARRAY_BUFFER, 0);
+  // [\RENDER TEST]
+
+  for (uint32_t i = 0; i < m_balls.size(); ++i) {
+    drawSprite(&m_balls[i].m_sprite);
+  }
+}
+
+void Game::drawSprite(Sprite* sprite) {
+  Color c = sprite->getColor();
+  glUniform4f(m_opengl_data.m_color_location, (float)c.r / (float)255, 
+    (float)c.g / (float)255, (float)c.b / (float)255, (float)c.a / (float)255);
+
+  glBindTexture(GL_TEXTURE_2D, sprite->getTextureHandler());
+
+  glBindBuffer(GL_ARRAY_BUFFER, m_opengl_data.m_vertices_index);
+
+  Vec3 scale = sprite->getScale();
+  Vec3 pos = sprite->getPosition();
+  Vec3 vertices[4] = {
+    {
+      m_opengl_data.m_vertices[0].x * scale.x + pos.x, 
+      m_opengl_data.m_vertices[0].y * scale.y + pos.y, 
+      m_opengl_data.m_vertices[0].z * scale.z + pos.z 
+    },
+    {
+      m_opengl_data.m_vertices[1].x * scale.x + pos.x, 
+      m_opengl_data.m_vertices[1].y * scale.y + pos.y, 
+      m_opengl_data.m_vertices[1].z * scale.z + pos.z 
+    },
+    {
+      m_opengl_data.m_vertices[2].x * scale.x + pos.x, 
+      m_opengl_data.m_vertices[2].y * scale.y + pos.y, 
+      m_opengl_data.m_vertices[2].z * scale.z + pos.z 
+    },
+    { 
+      m_opengl_data.m_vertices[3].x * scale.x + pos.x, 
+      m_opengl_data.m_vertices[3].y * scale.y + pos.y, 
+      m_opengl_data.m_vertices[3].z * scale.z + pos.z 
+    },
+  };
+  glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), &vertices);
+
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_opengl_data.m_indices_index);
+  glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, m_opengl_data.m_indices);
+
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
   glBindBuffer(GL_ARRAY_BUFFER, 0);
+  glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 Game::Game() {
@@ -113,48 +178,56 @@ Game::Game() {
 }
 
 void Game::init() {
+  // IMPORTANT! Always first
   setupOpenGL();
+
+  // Game stuff
+  m_balls.reserve(10);  // TODO: max 10 balls at the same time?
+  m_balls.emplace_back();
 }
 
 
 void Game::setupOpenGL() {
   printf("Initializing OpenGL\n");
 
+  #ifndef __PLATFORM_ANDROID__
+    glGenVertexArrays(1, &m_opengl_data.m_vao_id);
+    CheckGLError("glGenVertexArrays");
+    printf("vao id: %u\n", m_opengl_data.m_vao_id);
+    glBindVertexArray(m_opengl_data.m_vao_id);
+  #endif
 
   glDisable(GL_DEPTH_TEST);
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+  m_opengl_data.m_vertices[0] = { -1.0f,  1.0f, 0.0f };
+  m_opengl_data.m_vertices[1] = { -1.0f, -1.0f, 0.0f };
+  m_opengl_data.m_vertices[2] = {  1.0f,  1.0f, 0.0f };
+  m_opengl_data.m_vertices[3] = {  1.0f, -1.0f, 0.0f };
 
-  m_vertices[0] = { -1.0f,  1.0f, 0.0f };
-  m_vertices[1] = { -1.0f, -1.0f, 0.0f };
-  m_vertices[2] = {  1.0f,  1.0f, 0.0f };
-  m_vertices[3] = {  1.0f, -1.0f, 0.0f };
+  m_opengl_data.m_uvs[0] = { 0.0f, 1.0f, 0.0f };
+  m_opengl_data.m_uvs[1] = { 0.0f, 0.0f, 0.0f };
+  m_opengl_data.m_uvs[2] = { 1.0f, 1.0f, 0.0f };
+  m_opengl_data.m_uvs[3] = { 1.0f, 0.0f, 0.0f };
 
-  m_uvs[0] = { 0.0f, 1.0f, 0.0f };
-  m_uvs[1] = { 0.0f, 0.0f, 0.0f };
-  m_uvs[2] = { 1.0f, 1.0f, 0.0f };
-  m_uvs[3] = { 1.0f, 0.0f, 0.0f };
+  m_opengl_data.m_indices[0] = 0;
+  m_opengl_data.m_indices[1] = 1;
+  m_opengl_data.m_indices[2] = 2;
+  m_opengl_data.m_indices[3] = 3;
+  m_opengl_data.m_indices[4] = 2;
+  m_opengl_data.m_indices[5] = 1;
 
-  m_indices[0] = 0;
-  m_indices[1] = 1;
-  m_indices[2] = 2;
-  m_indices[3] = 3;
-  m_indices[4] = 2;
-  m_indices[5] = 1;
-
-  #ifndef __PLATFORM_ANDROID__
-    glGenVertexArrays(1, &m_vao_id);
-    glBindVertexArray(m_vao_id);
-  #endif
-
-  glGenBuffers(1, &m_vertices_index);
-  glBindBuffer(GL_ARRAY_BUFFER, m_vertices_index);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(m_vertices) + sizeof(m_uvs) + 
-    sizeof(m_indices), m_vertices, GL_STATIC_DRAW);
-  glBufferSubData(GL_ARRAY_BUFFER, sizeof(m_vertices), sizeof(m_uvs), m_uvs);
-  glBufferSubData(GL_ARRAY_BUFFER, sizeof(m_vertices) + sizeof(m_uvs), 
-    sizeof(m_indices), m_indices);
+  glGenBuffers(1, &m_opengl_data.m_vertices_index);
+  glBindBuffer(GL_ARRAY_BUFFER, m_opengl_data.m_vertices_index);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(m_opengl_data.m_vertices) + 
+    sizeof(m_opengl_data.m_uvs) + sizeof(m_opengl_data.m_indices), 
+    m_opengl_data.m_vertices, GL_STATIC_DRAW);
+  glBufferSubData(GL_ARRAY_BUFFER, sizeof(m_opengl_data.m_vertices), 
+    sizeof(m_opengl_data.m_uvs), m_opengl_data.m_uvs);
+  glBufferSubData(GL_ARRAY_BUFFER, sizeof(m_opengl_data.m_vertices) + 
+    sizeof(m_opengl_data.m_uvs), sizeof(m_opengl_data.m_indices), 
+    m_opengl_data.m_indices);
   glBindBuffer(GL_ARRAY_BUFFER, 0);
 
   // Create and compile vertex shader
@@ -191,28 +264,29 @@ void Game::setupOpenGL() {
     free(log);
   }
 
-  GLuint program_id = glCreateProgram();
-  glAttachShader(program_id, vertex_shader_id);
-  glAttachShader(program_id, fragment_shader_id);
-  glLinkProgram(program_id);
+  m_opengl_data.m_program_id = glCreateProgram();
+  glAttachShader(m_opengl_data.m_program_id, vertex_shader_id);
+  glAttachShader(m_opengl_data.m_program_id, fragment_shader_id);
+  glLinkProgram(m_opengl_data.m_program_id);
 
-  m_mvp_location = glGetUniformLocation(program_id, "MVP");
-  m_color_location = glGetUniformLocation(program_id, "color");
+  m_opengl_data.m_mvp_location = glGetUniformLocation(m_opengl_data.m_program_id, "MVP");
+  m_opengl_data.m_color_location = glGetUniformLocation(m_opengl_data.m_program_id, "color");
   
-  glBindBuffer(GL_ARRAY_BUFFER, m_vertices_index);
-  m_position_location = glGetAttribLocation(program_id, "position");
-  glEnableVertexAttribArray(m_position_location);
-  glVertexAttribPointer(m_position_location, 3, GL_FLOAT, GL_FALSE, 0, (GLvoid*)0);
+  glBindBuffer(GL_ARRAY_BUFFER, m_opengl_data.m_vertices_index);
+  m_opengl_data.m_position_location = glGetAttribLocation(m_opengl_data.m_program_id, "position");
+  glEnableVertexAttribArray(m_opengl_data.m_position_location);
+  glVertexAttribPointer(m_opengl_data.m_position_location, 3, GL_FLOAT, 
+    GL_FALSE, 0, (GLvoid*)0);
 
-  m_uvs_location = glGetAttribLocation(program_id, "uvs");
-  glEnableVertexAttribArray(m_uvs_location);
-  glVertexAttribPointer(m_uvs_location, 3, GL_FLOAT, GL_FALSE, 0, 
-    (GLvoid*)sizeof(m_vertices));
+  m_opengl_data.m_uvs_location = glGetAttribLocation(m_opengl_data.m_program_id, "uvs");
+  glEnableVertexAttribArray(m_opengl_data.m_uvs_location);
+  glVertexAttribPointer(m_opengl_data.m_uvs_location, 3, GL_FLOAT, GL_FALSE, 0, 
+    (GLvoid*)sizeof(m_opengl_data.m_vertices));
 
   glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-  // Projection matrix
-  //   column-major order!
+  //  Projection matrix
+  //    column-major order!
 
   float right  =  1.0f;
   float left   = -1.0f;
@@ -223,30 +297,31 @@ void Game::setupOpenGL() {
   float far  = 1000.0f;
   float fov  = 60.0f;
 
-  m_projection.matrix[0] = 2.0f / (right - left);
-  m_projection.matrix[1] = 0.0f;
-  m_projection.matrix[2] = 0.0f;
-  m_projection.matrix[3] = 0.0f;
+  m_opengl_data.m_projection.matrix[0] = 2.0f / (right - left);
+  m_opengl_data.m_projection.matrix[1] = 0.0f;
+  m_opengl_data.m_projection.matrix[2] = 0.0f;
+  m_opengl_data.m_projection.matrix[3] = 0.0f;
 
-  m_projection.matrix[4] = 0.0f;
-  m_projection.matrix[5] = 2.0f / (top - bottom);
-  m_projection.matrix[6] = 0.0f;
-  m_projection.matrix[7] = 0.0f;
+  m_opengl_data.m_projection.matrix[4] = 0.0f;
+  m_opengl_data.m_projection.matrix[5] = 2.0f / (top - bottom);
+  m_opengl_data.m_projection.matrix[6] = 0.0f;
+  m_opengl_data.m_projection.matrix[7] = 0.0f;
 
-  m_projection.matrix[8] = 0.0f;
-  m_projection.matrix[9] = 0.0f;
-  m_projection.matrix[10] = 2.0f / (far - near);
-  m_projection.matrix[11] = 0.0f;
+  m_opengl_data.m_projection.matrix[8] = 0.0f;
+  m_opengl_data.m_projection.matrix[9] = 0.0f;
+  m_opengl_data.m_projection.matrix[10] = 2.0f / (far - near);
+  m_opengl_data.m_projection.matrix[11] = 0.0f;
 
-  m_projection.matrix[12] = 0.0f;
-  m_projection.matrix[13] = 0.0f;
-  m_projection.matrix[14] = 0.0f;
-  m_projection.matrix[15] = 1.0f;
+  m_opengl_data.m_projection.matrix[12] = 0.0f;
+  m_opengl_data.m_projection.matrix[13] = 0.0f;
+  m_opengl_data.m_projection.matrix[14] = 0.0f;
+  m_opengl_data.m_projection.matrix[15] = 1.0f;
 
   glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
-  glUseProgram(program_id);
-  glUniformMatrix4fv(m_mvp_location, 1, GL_FALSE, (const GLfloat*)m_projection.matrix);
+  glUseProgram(m_opengl_data.m_program_id);
+  glUniformMatrix4fv(m_opengl_data.m_mvp_location, 1, GL_FALSE, 
+    (const GLfloat*)m_opengl_data.m_projection.matrix);
 }
 
 
