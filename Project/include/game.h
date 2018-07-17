@@ -24,8 +24,11 @@ public:
   void update(float dt);
   void draw();
 
-  static const uint32_t m_render_width;
-  static const uint32_t m_render_height;
+  static uint32_t m_render_width;
+  static uint32_t m_render_height;
+
+  static uint32_t m_render_desired_width;
+  static uint32_t m_render_desired_height;
 
 private:
   struct OpenGLData {

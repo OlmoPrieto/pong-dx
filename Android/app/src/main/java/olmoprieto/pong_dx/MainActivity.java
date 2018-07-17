@@ -7,6 +7,8 @@ import android.content.pm.ConfigurationInfo;
 import android.opengl.GLSurfaceView;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Display;
 import android.view.MotionEvent;
 import android.view.Window;
 import android.view.WindowManager;
@@ -39,7 +41,10 @@ public class MainActivity extends AppCompatActivity {
             glSurfaceView = new GLSurfaceView(this);
 
             glSurfaceView.setEGLContextClientVersion(2);
-            rendererWrapper = new RendererWrapper();
+            glSurfaceView.setPreserveEGLContextOnPause(true);
+
+            Display display = getWindowManager().getDefaultDisplay();
+            rendererWrapper = new RendererWrapper(display.getWidth(), display.getHeight());
             glSurfaceView.setRenderer(rendererWrapper);
 
             rendererSet = true;

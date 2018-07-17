@@ -10,9 +10,11 @@ extern "C" {
 #endif
 
 JNIEXPORT void JNICALL Java_olmoprieto_pong_1dx_GameLibJNIWrapper_onSurfaceCreated
-        (JNIEnv *env, jclass clss) {
+        (JNIEnv *env, jclass clss, jint width, jint height) {
 
     //Game::Instance()->onSurfaceCreated();
+    Game::m_render_width  = width;
+    Game::m_render_height = height;
     Game::Instance();
 }
 
