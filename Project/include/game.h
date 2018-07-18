@@ -1,10 +1,12 @@
 #ifndef __GAME_H__
 #define __GAME_H__
 
-#ifndef __PLATFORM_ANDROID__
-#include <OpenGL/gl3.h>
-#else
-#include <GLES2/gl2.h>
+#ifdef __PLATFORM_MACOSX__
+  #include <OpenGL/gl3.h>
+#elif __PLATFORM_LINUX__
+  #include <glew/include/GL/glew.h>
+#elif __PLATFORM_ANDROID__
+  #include <GLES2/gl2.h>
 #endif
 
 #include <ball.h>

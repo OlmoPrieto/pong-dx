@@ -46,33 +46,34 @@ ifeq ($(config),debug)
   OBJDIR              = obj/Debug
   TARGETDIR           = bin
   TARGET              = $(TARGETDIR)/Project
-  DEFINES            += -D__PLATFORM_MACOSX__ -D_GLFW_COCOA -D_GLFW_NSGL -D_GLFW_USE_OPENGL -DDEBUG
-  INCLUDES           += -I"include" -I"dependencies" -I"dependencies/glew/include" -I"dependencies/GLFW/deps"
+  DEFINES            += -D__PLATFORM_LINUX__ -D_GLFW_X11 -D_GLFW_HAS_GLXGETPROCADDRESS -D_GLFW_GLX -D_GLFW_USE_OPENGL -DDEBUG
+  INCLUDES           += -Iinclude -Idependencies -Idependencies/glew/include -Idependencies/GLFW/deps -I/usr/include/GL
+  INCLUDES           +=
   ALL_CPPFLAGS       += $(CPPFLAGS) -MMD -MP -MP $(DEFINES) $(INCLUDES)
-  ALL_ASMFLAGS       += $(ASMFLAGS) $(CFLAGS) $(ALL_CPPFLAGS) $(ARCH) -g -Wall -Wextra
   ALL_CFLAGS         += $(CFLAGS) $(ALL_CPPFLAGS) $(ARCH) -g -Wall -Wextra
   ALL_CXXFLAGS       += $(CXXFLAGS) $(CFLAGS) $(ALL_CPPFLAGS) $(ARCH) -g -Wall -Wextra -std=c++14
   ALL_OBJCFLAGS      += $(CFLAGS) $(ALL_CPPFLAGS) $(ARCH) -g -Wall -Wextra
   ALL_OBJCPPFLAGS    += $(CXXFLAGS) $(CFLAGS) $(ALL_CPPFLAGS) $(ARCH) -g -Wall -Wextra -std=c++14
   ALL_RESFLAGS       += $(RESFLAGS) $(DEFINES) $(INCLUDES)
-  ALL_LDFLAGS        += $(LDFLAGS) -L. -framework Cocoa -framework QuartzCore -framework OpenGL -framework OpenAL
+  ALL_LDFLAGS        += $(LDFLAGS) -L/usr/bin -L/usr/lib -L.
   LDDEPS             +=
-  LIBS               += $(LDDEPS) -framework Cocoa -framework OpenGL -framework IOKit -framework CoreVideo
+  LIBS               += $(LDDEPS) -lX11 -lXrandr -lXcursor -lXinerama -lXi -lXxf86vm -lrt -lpthread -lGL -lglut -lGLU -lm
   EXTERNAL_LIBS      +=
   LINKCMD             = $(CXX) -o $(TARGET) $(OBJECTS) $(RESOURCES) $(ARCH) $(ALL_LDFLAGS) $(LIBS)
   OBJECTS := \
-	$(OBJDIR)/dependencies/GLFW/src/cocoa_init.o \
-	$(OBJDIR)/dependencies/GLFW/src/cocoa_monitor.o \
-	$(OBJDIR)/dependencies/GLFW/src/cocoa_window.o \
 	$(OBJDIR)/dependencies/GLFW/src/context.o \
+	$(OBJDIR)/dependencies/GLFW/src/glx_context.o \
 	$(OBJDIR)/dependencies/GLFW/src/init.o \
 	$(OBJDIR)/dependencies/GLFW/src/input.o \
-	$(OBJDIR)/dependencies/GLFW/src/iokit_joystick.o \
-	$(OBJDIR)/dependencies/GLFW/src/mach_time.o \
+	$(OBJDIR)/dependencies/GLFW/src/linux_joystick.o \
 	$(OBJDIR)/dependencies/GLFW/src/monitor.o \
-	$(OBJDIR)/dependencies/GLFW/src/nsgl_context.o \
+	$(OBJDIR)/dependencies/GLFW/src/posix_time.o \
 	$(OBJDIR)/dependencies/GLFW/src/posix_tls.o \
 	$(OBJDIR)/dependencies/GLFW/src/window.o \
+	$(OBJDIR)/dependencies/GLFW/src/x11_init.o \
+	$(OBJDIR)/dependencies/GLFW/src/x11_monitor.o \
+	$(OBJDIR)/dependencies/GLFW/src/x11_window.o \
+	$(OBJDIR)/dependencies/GLFW/src/xkb_unicode.o \
 	$(OBJDIR)/dependencies/glew/include/glew.o \
 	$(OBJDIR)/src/ball.o \
 	$(OBJDIR)/src/game.o \
@@ -93,33 +94,34 @@ ifeq ($(config),release)
   OBJDIR              = obj/Release
   TARGETDIR           = bin
   TARGET              = $(TARGETDIR)/Project
-  DEFINES            += -D__PLATFORM_MACOSX__ -D_GLFW_COCOA -D_GLFW_NSGL -D_GLFW_USE_OPENGL -DNDEBUG
-  INCLUDES           += -I"include" -I"dependencies" -I"dependencies/glew/include" -I"dependencies/GLFW/deps"
+  DEFINES            += -D__PLATFORM_LINUX__ -D_GLFW_X11 -D_GLFW_HAS_GLXGETPROCADDRESS -D_GLFW_GLX -D_GLFW_USE_OPENGL -DNDEBUG
+  INCLUDES           += -Iinclude -Idependencies -Idependencies/glew/include -Idependencies/GLFW/deps -I/usr/include/GL
+  INCLUDES           +=
   ALL_CPPFLAGS       += $(CPPFLAGS) -MMD -MP -MP $(DEFINES) $(INCLUDES)
-  ALL_ASMFLAGS       += $(ASMFLAGS) $(CFLAGS) $(ALL_CPPFLAGS) $(ARCH) -O2 -Wall -Wextra
   ALL_CFLAGS         += $(CFLAGS) $(ALL_CPPFLAGS) $(ARCH) -O2 -Wall -Wextra
   ALL_CXXFLAGS       += $(CXXFLAGS) $(CFLAGS) $(ALL_CPPFLAGS) $(ARCH) -O2 -Wall -Wextra -std=c++14
   ALL_OBJCFLAGS      += $(CFLAGS) $(ALL_CPPFLAGS) $(ARCH) -O2 -Wall -Wextra
   ALL_OBJCPPFLAGS    += $(CXXFLAGS) $(CFLAGS) $(ALL_CPPFLAGS) $(ARCH) -O2 -Wall -Wextra -std=c++14
   ALL_RESFLAGS       += $(RESFLAGS) $(DEFINES) $(INCLUDES)
-  ALL_LDFLAGS        += $(LDFLAGS) -L. -framework Cocoa -framework QuartzCore -framework OpenGL -framework OpenAL
+  ALL_LDFLAGS        += $(LDFLAGS) -L/usr/bin -L/usr/lib -L. -s
   LDDEPS             +=
-  LIBS               += $(LDDEPS) -framework Cocoa -framework OpenGL -framework IOKit -framework CoreVideo
+  LIBS               += $(LDDEPS) -lX11 -lXrandr -lXcursor -lXinerama -lXi -lXxf86vm -lrt -lpthread -lGL -lglut -lGLU -lm
   EXTERNAL_LIBS      +=
   LINKCMD             = $(CXX) -o $(TARGET) $(OBJECTS) $(RESOURCES) $(ARCH) $(ALL_LDFLAGS) $(LIBS)
   OBJECTS := \
-	$(OBJDIR)/dependencies/GLFW/src/cocoa_init.o \
-	$(OBJDIR)/dependencies/GLFW/src/cocoa_monitor.o \
-	$(OBJDIR)/dependencies/GLFW/src/cocoa_window.o \
 	$(OBJDIR)/dependencies/GLFW/src/context.o \
+	$(OBJDIR)/dependencies/GLFW/src/glx_context.o \
 	$(OBJDIR)/dependencies/GLFW/src/init.o \
 	$(OBJDIR)/dependencies/GLFW/src/input.o \
-	$(OBJDIR)/dependencies/GLFW/src/iokit_joystick.o \
-	$(OBJDIR)/dependencies/GLFW/src/mach_time.o \
+	$(OBJDIR)/dependencies/GLFW/src/linux_joystick.o \
 	$(OBJDIR)/dependencies/GLFW/src/monitor.o \
-	$(OBJDIR)/dependencies/GLFW/src/nsgl_context.o \
+	$(OBJDIR)/dependencies/GLFW/src/posix_time.o \
 	$(OBJDIR)/dependencies/GLFW/src/posix_tls.o \
 	$(OBJDIR)/dependencies/GLFW/src/window.o \
+	$(OBJDIR)/dependencies/GLFW/src/x11_init.o \
+	$(OBJDIR)/dependencies/GLFW/src/x11_monitor.o \
+	$(OBJDIR)/dependencies/GLFW/src/x11_window.o \
+	$(OBJDIR)/dependencies/GLFW/src/xkb_unicode.o \
 	$(OBJDIR)/dependencies/glew/include/glew.o \
 	$(OBJDIR)/src/ball.o \
 	$(OBJDIR)/src/game.o \
@@ -140,33 +142,34 @@ ifeq ($(config),debug64)
   OBJDIR              = obj/x64/Debug
   TARGETDIR           = bin
   TARGET              = $(TARGETDIR)/Project
-  DEFINES            += -D__PLATFORM_MACOSX__ -D_GLFW_COCOA -D_GLFW_NSGL -D_GLFW_USE_OPENGL -DDEBUG
-  INCLUDES           += -I"include" -I"dependencies" -I"dependencies/glew/include" -I"dependencies/GLFW/deps"
+  DEFINES            += -D__PLATFORM_LINUX__ -D_GLFW_X11 -D_GLFW_HAS_GLXGETPROCADDRESS -D_GLFW_GLX -D_GLFW_USE_OPENGL -DDEBUG
+  INCLUDES           += -Iinclude -Idependencies -Idependencies/glew/include -Idependencies/GLFW/deps -I/usr/include/GL
+  INCLUDES           +=
   ALL_CPPFLAGS       += $(CPPFLAGS) -MMD -MP -MP $(DEFINES) $(INCLUDES)
-  ALL_ASMFLAGS       += $(ASMFLAGS) $(CFLAGS) $(ALL_CPPFLAGS) $(ARCH) -g -Wall -Wextra -m64
   ALL_CFLAGS         += $(CFLAGS) $(ALL_CPPFLAGS) $(ARCH) -g -Wall -Wextra -m64
   ALL_CXXFLAGS       += $(CXXFLAGS) $(CFLAGS) $(ALL_CPPFLAGS) $(ARCH) -g -Wall -Wextra -m64 -std=c++14
   ALL_OBJCFLAGS      += $(CFLAGS) $(ALL_CPPFLAGS) $(ARCH) -g -Wall -Wextra -m64
   ALL_OBJCPPFLAGS    += $(CXXFLAGS) $(CFLAGS) $(ALL_CPPFLAGS) $(ARCH) -g -Wall -Wextra -m64 -std=c++14
   ALL_RESFLAGS       += $(RESFLAGS) $(DEFINES) $(INCLUDES)
-  ALL_LDFLAGS        += $(LDFLAGS) -L. -m64 -framework Cocoa -framework QuartzCore -framework OpenGL -framework OpenAL
+  ALL_LDFLAGS        += $(LDFLAGS) -L/usr/bin -L/usr/lib -L. -m64
   LDDEPS             +=
-  LIBS               += $(LDDEPS) -framework Cocoa -framework OpenGL -framework IOKit -framework CoreVideo
+  LIBS               += $(LDDEPS) -lX11 -lXrandr -lXcursor -lXinerama -lXi -lXxf86vm -lrt -lpthread -lGL -lglut -lGLU -lm
   EXTERNAL_LIBS      +=
   LINKCMD             = $(CXX) -o $(TARGET) $(OBJECTS) $(RESOURCES) $(ARCH) $(ALL_LDFLAGS) $(LIBS)
   OBJECTS := \
-	$(OBJDIR)/dependencies/GLFW/src/cocoa_init.o \
-	$(OBJDIR)/dependencies/GLFW/src/cocoa_monitor.o \
-	$(OBJDIR)/dependencies/GLFW/src/cocoa_window.o \
 	$(OBJDIR)/dependencies/GLFW/src/context.o \
+	$(OBJDIR)/dependencies/GLFW/src/glx_context.o \
 	$(OBJDIR)/dependencies/GLFW/src/init.o \
 	$(OBJDIR)/dependencies/GLFW/src/input.o \
-	$(OBJDIR)/dependencies/GLFW/src/iokit_joystick.o \
-	$(OBJDIR)/dependencies/GLFW/src/mach_time.o \
+	$(OBJDIR)/dependencies/GLFW/src/linux_joystick.o \
 	$(OBJDIR)/dependencies/GLFW/src/monitor.o \
-	$(OBJDIR)/dependencies/GLFW/src/nsgl_context.o \
+	$(OBJDIR)/dependencies/GLFW/src/posix_time.o \
 	$(OBJDIR)/dependencies/GLFW/src/posix_tls.o \
 	$(OBJDIR)/dependencies/GLFW/src/window.o \
+	$(OBJDIR)/dependencies/GLFW/src/x11_init.o \
+	$(OBJDIR)/dependencies/GLFW/src/x11_monitor.o \
+	$(OBJDIR)/dependencies/GLFW/src/x11_window.o \
+	$(OBJDIR)/dependencies/GLFW/src/xkb_unicode.o \
 	$(OBJDIR)/dependencies/glew/include/glew.o \
 	$(OBJDIR)/src/ball.o \
 	$(OBJDIR)/src/game.o \
@@ -187,33 +190,34 @@ ifeq ($(config),release64)
   OBJDIR              = obj/x64/Release
   TARGETDIR           = bin
   TARGET              = $(TARGETDIR)/Project
-  DEFINES            += -D__PLATFORM_MACOSX__ -D_GLFW_COCOA -D_GLFW_NSGL -D_GLFW_USE_OPENGL -DNDEBUG
-  INCLUDES           += -I"include" -I"dependencies" -I"dependencies/glew/include" -I"dependencies/GLFW/deps"
+  DEFINES            += -D__PLATFORM_LINUX__ -D_GLFW_X11 -D_GLFW_HAS_GLXGETPROCADDRESS -D_GLFW_GLX -D_GLFW_USE_OPENGL -DNDEBUG
+  INCLUDES           += -Iinclude -Idependencies -Idependencies/glew/include -Idependencies/GLFW/deps -I/usr/include/GL
+  INCLUDES           +=
   ALL_CPPFLAGS       += $(CPPFLAGS) -MMD -MP -MP $(DEFINES) $(INCLUDES)
-  ALL_ASMFLAGS       += $(ASMFLAGS) $(CFLAGS) $(ALL_CPPFLAGS) $(ARCH) -O2 -Wall -Wextra -m64
   ALL_CFLAGS         += $(CFLAGS) $(ALL_CPPFLAGS) $(ARCH) -O2 -Wall -Wextra -m64
   ALL_CXXFLAGS       += $(CXXFLAGS) $(CFLAGS) $(ALL_CPPFLAGS) $(ARCH) -O2 -Wall -Wextra -m64 -std=c++14
   ALL_OBJCFLAGS      += $(CFLAGS) $(ALL_CPPFLAGS) $(ARCH) -O2 -Wall -Wextra -m64
   ALL_OBJCPPFLAGS    += $(CXXFLAGS) $(CFLAGS) $(ALL_CPPFLAGS) $(ARCH) -O2 -Wall -Wextra -m64 -std=c++14
   ALL_RESFLAGS       += $(RESFLAGS) $(DEFINES) $(INCLUDES)
-  ALL_LDFLAGS        += $(LDFLAGS) -L. -m64 -framework Cocoa -framework QuartzCore -framework OpenGL -framework OpenAL
+  ALL_LDFLAGS        += $(LDFLAGS) -L/usr/bin -L/usr/lib -L. -s -m64
   LDDEPS             +=
-  LIBS               += $(LDDEPS) -framework Cocoa -framework OpenGL -framework IOKit -framework CoreVideo
+  LIBS               += $(LDDEPS) -lX11 -lXrandr -lXcursor -lXinerama -lXi -lXxf86vm -lrt -lpthread -lGL -lglut -lGLU -lm
   EXTERNAL_LIBS      +=
   LINKCMD             = $(CXX) -o $(TARGET) $(OBJECTS) $(RESOURCES) $(ARCH) $(ALL_LDFLAGS) $(LIBS)
   OBJECTS := \
-	$(OBJDIR)/dependencies/GLFW/src/cocoa_init.o \
-	$(OBJDIR)/dependencies/GLFW/src/cocoa_monitor.o \
-	$(OBJDIR)/dependencies/GLFW/src/cocoa_window.o \
 	$(OBJDIR)/dependencies/GLFW/src/context.o \
+	$(OBJDIR)/dependencies/GLFW/src/glx_context.o \
 	$(OBJDIR)/dependencies/GLFW/src/init.o \
 	$(OBJDIR)/dependencies/GLFW/src/input.o \
-	$(OBJDIR)/dependencies/GLFW/src/iokit_joystick.o \
-	$(OBJDIR)/dependencies/GLFW/src/mach_time.o \
+	$(OBJDIR)/dependencies/GLFW/src/linux_joystick.o \
 	$(OBJDIR)/dependencies/GLFW/src/monitor.o \
-	$(OBJDIR)/dependencies/GLFW/src/nsgl_context.o \
+	$(OBJDIR)/dependencies/GLFW/src/posix_time.o \
 	$(OBJDIR)/dependencies/GLFW/src/posix_tls.o \
 	$(OBJDIR)/dependencies/GLFW/src/window.o \
+	$(OBJDIR)/dependencies/GLFW/src/x11_init.o \
+	$(OBJDIR)/dependencies/GLFW/src/x11_monitor.o \
+	$(OBJDIR)/dependencies/GLFW/src/x11_window.o \
+	$(OBJDIR)/dependencies/GLFW/src/xkb_unicode.o \
 	$(OBJDIR)/dependencies/glew/include/glew.o \
 	$(OBJDIR)/src/ball.o \
 	$(OBJDIR)/src/game.o \
@@ -234,33 +238,34 @@ ifeq ($(config),debug32)
   OBJDIR              = obj/x32/Debug
   TARGETDIR           = bin
   TARGET              = $(TARGETDIR)/Project
-  DEFINES            += -D__PLATFORM_MACOSX__ -D_GLFW_COCOA -D_GLFW_NSGL -D_GLFW_USE_OPENGL -DDEBUG
-  INCLUDES           += -I"include" -I"dependencies" -I"dependencies/glew/include" -I"dependencies/GLFW/deps"
+  DEFINES            += -D__PLATFORM_LINUX__ -D_GLFW_X11 -D_GLFW_HAS_GLXGETPROCADDRESS -D_GLFW_GLX -D_GLFW_USE_OPENGL -DDEBUG
+  INCLUDES           += -Iinclude -Idependencies -Idependencies/glew/include -Idependencies/GLFW/deps -I/usr/include/GL
+  INCLUDES           +=
   ALL_CPPFLAGS       += $(CPPFLAGS) -MMD -MP -MP $(DEFINES) $(INCLUDES)
-  ALL_ASMFLAGS       += $(ASMFLAGS) $(CFLAGS) $(ALL_CPPFLAGS) $(ARCH) -g -Wall -Wextra -m32
   ALL_CFLAGS         += $(CFLAGS) $(ALL_CPPFLAGS) $(ARCH) -g -Wall -Wextra -m32
   ALL_CXXFLAGS       += $(CXXFLAGS) $(CFLAGS) $(ALL_CPPFLAGS) $(ARCH) -g -Wall -Wextra -m32 -std=c++14
   ALL_OBJCFLAGS      += $(CFLAGS) $(ALL_CPPFLAGS) $(ARCH) -g -Wall -Wextra -m32
   ALL_OBJCPPFLAGS    += $(CXXFLAGS) $(CFLAGS) $(ALL_CPPFLAGS) $(ARCH) -g -Wall -Wextra -m32 -std=c++14
   ALL_RESFLAGS       += $(RESFLAGS) $(DEFINES) $(INCLUDES)
-  ALL_LDFLAGS        += $(LDFLAGS) -L. -m32 -framework Cocoa -framework QuartzCore -framework OpenGL -framework OpenAL
+  ALL_LDFLAGS        += $(LDFLAGS) -L/usr/bin -L/usr/lib -L. -m32
   LDDEPS             +=
-  LIBS               += $(LDDEPS) -framework Cocoa -framework OpenGL -framework IOKit -framework CoreVideo
+  LIBS               += $(LDDEPS) -lX11 -lXrandr -lXcursor -lXinerama -lXi -lXxf86vm -lrt -lpthread -lGL -lglut -lGLU -lm
   EXTERNAL_LIBS      +=
   LINKCMD             = $(CXX) -o $(TARGET) $(OBJECTS) $(RESOURCES) $(ARCH) $(ALL_LDFLAGS) $(LIBS)
   OBJECTS := \
-	$(OBJDIR)/dependencies/GLFW/src/cocoa_init.o \
-	$(OBJDIR)/dependencies/GLFW/src/cocoa_monitor.o \
-	$(OBJDIR)/dependencies/GLFW/src/cocoa_window.o \
 	$(OBJDIR)/dependencies/GLFW/src/context.o \
+	$(OBJDIR)/dependencies/GLFW/src/glx_context.o \
 	$(OBJDIR)/dependencies/GLFW/src/init.o \
 	$(OBJDIR)/dependencies/GLFW/src/input.o \
-	$(OBJDIR)/dependencies/GLFW/src/iokit_joystick.o \
-	$(OBJDIR)/dependencies/GLFW/src/mach_time.o \
+	$(OBJDIR)/dependencies/GLFW/src/linux_joystick.o \
 	$(OBJDIR)/dependencies/GLFW/src/monitor.o \
-	$(OBJDIR)/dependencies/GLFW/src/nsgl_context.o \
+	$(OBJDIR)/dependencies/GLFW/src/posix_time.o \
 	$(OBJDIR)/dependencies/GLFW/src/posix_tls.o \
 	$(OBJDIR)/dependencies/GLFW/src/window.o \
+	$(OBJDIR)/dependencies/GLFW/src/x11_init.o \
+	$(OBJDIR)/dependencies/GLFW/src/x11_monitor.o \
+	$(OBJDIR)/dependencies/GLFW/src/x11_window.o \
+	$(OBJDIR)/dependencies/GLFW/src/xkb_unicode.o \
 	$(OBJDIR)/dependencies/glew/include/glew.o \
 	$(OBJDIR)/src/ball.o \
 	$(OBJDIR)/src/game.o \
@@ -281,33 +286,34 @@ ifeq ($(config),release32)
   OBJDIR              = obj/x32/Release
   TARGETDIR           = bin
   TARGET              = $(TARGETDIR)/Project
-  DEFINES            += -D__PLATFORM_MACOSX__ -D_GLFW_COCOA -D_GLFW_NSGL -D_GLFW_USE_OPENGL -DNDEBUG
-  INCLUDES           += -I"include" -I"dependencies" -I"dependencies/glew/include" -I"dependencies/GLFW/deps"
+  DEFINES            += -D__PLATFORM_LINUX__ -D_GLFW_X11 -D_GLFW_HAS_GLXGETPROCADDRESS -D_GLFW_GLX -D_GLFW_USE_OPENGL -DNDEBUG
+  INCLUDES           += -Iinclude -Idependencies -Idependencies/glew/include -Idependencies/GLFW/deps -I/usr/include/GL
+  INCLUDES           +=
   ALL_CPPFLAGS       += $(CPPFLAGS) -MMD -MP -MP $(DEFINES) $(INCLUDES)
-  ALL_ASMFLAGS       += $(ASMFLAGS) $(CFLAGS) $(ALL_CPPFLAGS) $(ARCH) -O2 -Wall -Wextra -m32
   ALL_CFLAGS         += $(CFLAGS) $(ALL_CPPFLAGS) $(ARCH) -O2 -Wall -Wextra -m32
   ALL_CXXFLAGS       += $(CXXFLAGS) $(CFLAGS) $(ALL_CPPFLAGS) $(ARCH) -O2 -Wall -Wextra -m32 -std=c++14
   ALL_OBJCFLAGS      += $(CFLAGS) $(ALL_CPPFLAGS) $(ARCH) -O2 -Wall -Wextra -m32
   ALL_OBJCPPFLAGS    += $(CXXFLAGS) $(CFLAGS) $(ALL_CPPFLAGS) $(ARCH) -O2 -Wall -Wextra -m32 -std=c++14
   ALL_RESFLAGS       += $(RESFLAGS) $(DEFINES) $(INCLUDES)
-  ALL_LDFLAGS        += $(LDFLAGS) -L. -m32 -framework Cocoa -framework QuartzCore -framework OpenGL -framework OpenAL
+  ALL_LDFLAGS        += $(LDFLAGS) -L/usr/bin -L/usr/lib -L. -s -m32
   LDDEPS             +=
-  LIBS               += $(LDDEPS) -framework Cocoa -framework OpenGL -framework IOKit -framework CoreVideo
+  LIBS               += $(LDDEPS) -lX11 -lXrandr -lXcursor -lXinerama -lXi -lXxf86vm -lrt -lpthread -lGL -lglut -lGLU -lm
   EXTERNAL_LIBS      +=
   LINKCMD             = $(CXX) -o $(TARGET) $(OBJECTS) $(RESOURCES) $(ARCH) $(ALL_LDFLAGS) $(LIBS)
   OBJECTS := \
-	$(OBJDIR)/dependencies/GLFW/src/cocoa_init.o \
-	$(OBJDIR)/dependencies/GLFW/src/cocoa_monitor.o \
-	$(OBJDIR)/dependencies/GLFW/src/cocoa_window.o \
 	$(OBJDIR)/dependencies/GLFW/src/context.o \
+	$(OBJDIR)/dependencies/GLFW/src/glx_context.o \
 	$(OBJDIR)/dependencies/GLFW/src/init.o \
 	$(OBJDIR)/dependencies/GLFW/src/input.o \
-	$(OBJDIR)/dependencies/GLFW/src/iokit_joystick.o \
-	$(OBJDIR)/dependencies/GLFW/src/mach_time.o \
+	$(OBJDIR)/dependencies/GLFW/src/linux_joystick.o \
 	$(OBJDIR)/dependencies/GLFW/src/monitor.o \
-	$(OBJDIR)/dependencies/GLFW/src/nsgl_context.o \
+	$(OBJDIR)/dependencies/GLFW/src/posix_time.o \
 	$(OBJDIR)/dependencies/GLFW/src/posix_tls.o \
 	$(OBJDIR)/dependencies/GLFW/src/window.o \
+	$(OBJDIR)/dependencies/GLFW/src/x11_init.o \
+	$(OBJDIR)/dependencies/GLFW/src/x11_monitor.o \
+	$(OBJDIR)/dependencies/GLFW/src/x11_window.o \
+	$(OBJDIR)/dependencies/GLFW/src/xkb_unicode.o \
 	$(OBJDIR)/dependencies/glew/include/glew.o \
 	$(OBJDIR)/src/ball.o \
 	$(OBJDIR)/src/game.o \
@@ -326,7 +332,6 @@ endif
 
 OBJDIRS := \
 	$(OBJDIR) \
-	$(OBJDIR)/PC/Project/dependencies/GLFW/src \
 	$(OBJDIR)/dependencies/GLFW/src \
 	$(OBJDIR)/dependencies/glew/include \
 	$(OBJDIR)/src \
@@ -335,7 +340,7 @@ RESOURCES := \
 
 .PHONY: clean prebuild prelink
 
-all: $(OBJDIRS) $(TARGETDIR) prebuild prelink $(TARGET)
+all: $(OBJDIRS) prebuild prelink $(TARGET) | $(TARGETDIR)
 	@:
 
 $(TARGET): $(GCH) $(OBJECTS) $(LDDEPS) $(EXTERNAL_LIBS) $(RESOURCES) | $(TARGETDIR) $(OBJDIRS)
@@ -377,58 +382,6 @@ $(GCH_OBJC): $(PCH) $(MAKEFILE) | $(OBJDIR)
 	$(SILENT) $(CXX) $(ALL_OBJCPPFLAGS) -x objective-c++-header $(DEFINES) $(INCLUDES) -o "$@" -c "$<"
 endif
 
-$(OBJDIR)/PC/Project/dependencies/GLFW/src/context.o: ../PC/Project/dependencies/GLFW/src/context.c $(GCH) $(MAKEFILE)
-	@echo $(notdir $<)
-	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -c "$<"
-
-$(OBJDIR)/PC/Project/dependencies/GLFW/src/glx_context.o: ../PC/Project/dependencies/GLFW/src/glx_context.c $(GCH) $(MAKEFILE)
-	@echo $(notdir $<)
-	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -c "$<"
-
-$(OBJDIR)/PC/Project/dependencies/GLFW/src/init.o: ../PC/Project/dependencies/GLFW/src/init.c $(GCH) $(MAKEFILE)
-	@echo $(notdir $<)
-	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -c "$<"
-
-$(OBJDIR)/PC/Project/dependencies/GLFW/src/input.o: ../PC/Project/dependencies/GLFW/src/input.c $(GCH) $(MAKEFILE)
-	@echo $(notdir $<)
-	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -c "$<"
-
-$(OBJDIR)/PC/Project/dependencies/GLFW/src/linux_joystick.o: ../PC/Project/dependencies/GLFW/src/linux_joystick.c $(GCH) $(MAKEFILE)
-	@echo $(notdir $<)
-	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -c "$<"
-
-$(OBJDIR)/PC/Project/dependencies/GLFW/src/monitor.o: ../PC/Project/dependencies/GLFW/src/monitor.c $(GCH) $(MAKEFILE)
-	@echo $(notdir $<)
-	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -c "$<"
-
-$(OBJDIR)/PC/Project/dependencies/GLFW/src/posix_time.o: ../PC/Project/dependencies/GLFW/src/posix_time.c $(GCH) $(MAKEFILE)
-	@echo $(notdir $<)
-	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -c "$<"
-
-$(OBJDIR)/PC/Project/dependencies/GLFW/src/posix_tls.o: ../PC/Project/dependencies/GLFW/src/posix_tls.c $(GCH) $(MAKEFILE)
-	@echo $(notdir $<)
-	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -c "$<"
-
-$(OBJDIR)/PC/Project/dependencies/GLFW/src/window.o: ../PC/Project/dependencies/GLFW/src/window.c $(GCH) $(MAKEFILE)
-	@echo $(notdir $<)
-	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -c "$<"
-
-$(OBJDIR)/PC/Project/dependencies/GLFW/src/x11_init.o: ../PC/Project/dependencies/GLFW/src/x11_init.c $(GCH) $(MAKEFILE)
-	@echo $(notdir $<)
-	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -c "$<"
-
-$(OBJDIR)/PC/Project/dependencies/GLFW/src/x11_monitor.o: ../PC/Project/dependencies/GLFW/src/x11_monitor.c $(GCH) $(MAKEFILE)
-	@echo $(notdir $<)
-	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -c "$<"
-
-$(OBJDIR)/PC/Project/dependencies/GLFW/src/x11_window.o: ../PC/Project/dependencies/GLFW/src/x11_window.c $(GCH) $(MAKEFILE)
-	@echo $(notdir $<)
-	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -c "$<"
-
-$(OBJDIR)/PC/Project/dependencies/GLFW/src/xkb_unicode.o: ../PC/Project/dependencies/GLFW/src/xkb_unicode.c $(GCH) $(MAKEFILE)
-	@echo $(notdir $<)
-	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -c "$<"
-
 $(OBJDIR)/dependencies/GLFW/src/cocoa_init.o: dependencies/GLFW/src/cocoa_init.m $(GCH_OBJC) $(MAKEFILE)
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(ALL_OBJCFLAGS) $(FORCE_INCLUDE_OBJC) -o "$@" -c "$<"
@@ -445,6 +398,10 @@ $(OBJDIR)/dependencies/GLFW/src/context.o: dependencies/GLFW/src/context.c $(GCH
 	@echo $(notdir $<)
 	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -c "$<"
 
+$(OBJDIR)/dependencies/GLFW/src/glx_context.o: dependencies/GLFW/src/glx_context.c $(GCH) $(MAKEFILE)
+	@echo $(notdir $<)
+	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -c "$<"
+
 $(OBJDIR)/dependencies/GLFW/src/init.o: dependencies/GLFW/src/init.c $(GCH) $(MAKEFILE)
 	@echo $(notdir $<)
 	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -c "$<"
@@ -457,6 +414,10 @@ $(OBJDIR)/dependencies/GLFW/src/iokit_joystick.o: dependencies/GLFW/src/iokit_jo
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(ALL_OBJCFLAGS) $(FORCE_INCLUDE_OBJC) -o "$@" -c "$<"
 
+$(OBJDIR)/dependencies/GLFW/src/linux_joystick.o: dependencies/GLFW/src/linux_joystick.c $(GCH) $(MAKEFILE)
+	@echo $(notdir $<)
+	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -c "$<"
+
 $(OBJDIR)/dependencies/GLFW/src/mach_time.o: dependencies/GLFW/src/mach_time.c $(GCH) $(MAKEFILE)
 	@echo $(notdir $<)
 	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -c "$<"
@@ -468,6 +429,10 @@ $(OBJDIR)/dependencies/GLFW/src/monitor.o: dependencies/GLFW/src/monitor.c $(GCH
 $(OBJDIR)/dependencies/GLFW/src/nsgl_context.o: dependencies/GLFW/src/nsgl_context.m $(GCH_OBJC) $(MAKEFILE)
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(ALL_OBJCFLAGS) $(FORCE_INCLUDE_OBJC) -o "$@" -c "$<"
+
+$(OBJDIR)/dependencies/GLFW/src/posix_time.o: dependencies/GLFW/src/posix_time.c $(GCH) $(MAKEFILE)
+	@echo $(notdir $<)
+	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -c "$<"
 
 $(OBJDIR)/dependencies/GLFW/src/posix_tls.o: dependencies/GLFW/src/posix_tls.c $(GCH) $(MAKEFILE)
 	@echo $(notdir $<)
@@ -505,6 +470,22 @@ $(OBJDIR)/dependencies/GLFW/src/winmm_joystick.o: dependencies/GLFW/src/winmm_jo
 	@echo $(notdir $<)
 	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -c "$<"
 
+$(OBJDIR)/dependencies/GLFW/src/x11_init.o: dependencies/GLFW/src/x11_init.c $(GCH) $(MAKEFILE)
+	@echo $(notdir $<)
+	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -c "$<"
+
+$(OBJDIR)/dependencies/GLFW/src/x11_monitor.o: dependencies/GLFW/src/x11_monitor.c $(GCH) $(MAKEFILE)
+	@echo $(notdir $<)
+	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -c "$<"
+
+$(OBJDIR)/dependencies/GLFW/src/x11_window.o: dependencies/GLFW/src/x11_window.c $(GCH) $(MAKEFILE)
+	@echo $(notdir $<)
+	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -c "$<"
+
+$(OBJDIR)/dependencies/GLFW/src/xkb_unicode.o: dependencies/GLFW/src/xkb_unicode.c $(GCH) $(MAKEFILE)
+	@echo $(notdir $<)
+	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -c "$<"
+
 $(OBJDIR)/dependencies/glew/include/glew.o: dependencies/glew/include/glew.c $(GCH) $(MAKEFILE)
 	@echo $(notdir $<)
 	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -c "$<"
@@ -536,5 +517,4 @@ $(OBJDIR)/src/sprite.o: src/sprite.cpp $(GCH) $(MAKEFILE)
 -include $(OBJECTS:%.o=%.d)
 ifneq (,$(PCH))
   -include $(OBJDIR)/$(notdir $(PCH)).d
-  -include $(OBJDIR)/$(notdir $(PCH))_objc.d
 endif

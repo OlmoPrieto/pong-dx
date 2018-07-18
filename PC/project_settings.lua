@@ -125,20 +125,21 @@ solution "Project"
        
     configuration { "linux" }
       files {  -- GLFW
-        group = "GLFW", "./Project/dependencies/GLFW/src/context.c", 
-          "./Project/dependencies/GLFW/src/init.c", 
-          "./Project/dependencies/GLFW/src/input.c",
-          "./Project/dependencies/GLFW/src/monitor.c",
-          "./Project/dependencies/GLFW/src/glx_context.c",
-          "./Project/dependencies/GLFW/src/x11_init.c",
-          "./Project/dependencies/GLFW/src/x11_monitor.c",
-          "./Project/dependencies/GLFW/src/posix_time.c",
-          "./Project/dependencies/GLFW/src/posix_tls.c",
-          "./Project/dependencies/GLFW/src/x11_window.c",
-          "./Project/dependencies/GLFW/src/window.c",
-          "./Project/dependencies/GLFW/src/linux_joystick.c",
-          "./Project/dependencies/GLFW/src/xkb_unicode.c",
-        --"./Project/dependencies/GLFW/include/GLFW/glfw3.h"
+        group = "GLFW", 
+        	pd .. "/dependencies/GLFW/src/context.c", 
+          pd .. "/dependencies/GLFW/src/init.c", 
+          pd .. "/dependencies/GLFW/src/input.c",
+          pd .. "/dependencies/GLFW/src/monitor.c",
+          pd .. "/dependencies/GLFW/src/glx_context.c",
+          pd .. "/dependencies/GLFW/src/x11_init.c",
+          pd .. "/dependencies/GLFW/src/x11_monitor.c",
+          pd .. "/dependencies/GLFW/src/posix_time.c",
+          pd .. "/dependencies/GLFW/src/posix_tls.c",
+          pd .. "/dependencies/GLFW/src/x11_window.c",
+          pd .. "/dependencies/GLFW/src/window.c",
+          pd .. "/dependencies/GLFW/src/linux_joystick.c",
+          pd .. "/dependencies/GLFW/src/xkb_unicode.c",
+        --pd .. "/dependencies/GLFW/include/GLFW/glfw3.h"
     }
     links {
       "X11", "Xrandr", "Xcursor", "Xinerama", "Xi", "Xxf86vm", "rt", "pthread", "GL", "glut", "GLU", "m"
