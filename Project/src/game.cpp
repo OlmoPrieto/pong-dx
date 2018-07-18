@@ -1,5 +1,4 @@
 #include <game.h>
-//#include <android/log.h>
 #include <iostream>
 
 // ========================================================================
@@ -91,6 +90,8 @@ R"END(
 
 uint32_t Game::m_render_width  = 1080;
 uint32_t Game::m_render_height = 720;
+// uint32_t Game::m_render_width  = 480;
+// uint32_t Game::m_render_height = 640;
 
 uint32_t Game::m_render_desired_width = 720;
 uint32_t Game::m_render_desired_height = 480;
@@ -296,30 +297,24 @@ void Game::setupOpenGL() {
   float top    =  1.0f;
   float bottom = -1.0f;
 
-  //__android_log_print(ANDROID_LOG_INFO, "LOG", "m_render_width: %u\n", m_render_width);
-
   float aspect_ratio = m_render_width / m_render_height;
-  // right  = m_render_width * aspect_ratio;
-  // left   = -right;
-  // top    = m_render_height;
-  // bottom = -top;
   if (m_render_width > m_render_height) {
     aspect_ratio = m_render_width / m_render_height;
-    right  = m_render_width * aspect_ratio;
-    left   = -right;
+    right  = m_render_width;
+    left   = 0.0f;
     top    = m_render_height;
-    bottom = -top;
+    bottom = 0.0f;
   }
   else {
     aspect_ratio = m_render_height / m_render_width;
     right  = m_render_width;
-    left   = -right;
-    top    = m_render_height / aspect_ratio;
-    bottom = -top;
+    left   = 0.0f;
+    top    = m_render_height;
+    bottom = 0.0f;
   }
 
-  float near = 0.1f;
-  float far  = 1000.0f;
+  float near = -1.0f;
+  float far  = 1.0f;
   float fov  = 60.0f;
 
   m_opengl_data.m_projection.matrix[0] = 2.0f / (right - left);
@@ -336,14 +331,10 @@ void Game::setupOpenGL() {
   m_opengl_data.m_projection.matrix[9]  = 0.0f;
   m_opengl_data.m_projection.matrix[10] = -2.0f / (far - near);
   m_opengl_data.m_projection.matrix[11] = 0.0f;
-
-  // m_opengl_data.m_projection.matrix[12] = 0.0f;
-  // m_opengl_data.m_projection.matrix[13] = 0.0f;
-  // m_opengl_data.m_projection.matrix[14] = 0.0f;
-  // m_opengl_data.m_projection.matrix[15] = 1.0f;
+  
   m_opengl_data.m_projection.matrix[12] = -(right + left) / (right - left);
   m_opengl_data.m_projection.matrix[13] = -(top + bottom) / (top - bottom);
-  m_opengl_data.m_projection.matrix[14] = 0.0f;//-(far + near  ) / (far - near  );
+  m_opengl_data.m_projection.matrix[14] = -(far + near  ) / (far - near  );
   m_opengl_data.m_projection.matrix[15] = 1.0f;
 
   glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
