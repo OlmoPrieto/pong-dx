@@ -3,7 +3,6 @@
 Sprite::Sprite() {
   m_scale.x = 1.0f;
   m_scale.y = 1.0f;
-  m_scale.z = 1.0f;
 
   m_color = Color(255, 255, 255, 255);
 
@@ -31,11 +30,11 @@ Color Sprite::getColor() const {
   return m_color;
 }
 
-Vec3 Sprite::getPosition() const {
+Vec2 Sprite::getPosition() const {
   return m_position;
 }
 
-Vec3 Sprite::getScale() const {
+Vec2 Sprite::getScale() const {
   return m_scale;
 }
 
@@ -54,14 +53,13 @@ void Sprite::setColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
   m_color.a = a;
 }
 
-void Sprite::setPosition(const Vec3 &position) {
+void Sprite::setPosition(const Vec2 &position) {
   m_position = position;
 }
 
-void Sprite::setPosition(float x, float y, float z) {
+void Sprite::setPosition(float x, float y) {
   m_position.x = x;
   m_position.y = y;
-  m_position.z = z;
 }
 
 void Sprite::setPositionX(float x) {
@@ -72,18 +70,13 @@ void Sprite::setPositionY(float y) {
   m_position.y = y;
 }
 
-void Sprite::setPositionZ(float z) {
-  m_position.z = z;
-};
-
-void Sprite::setScale(const Vec3 &scale) {
+void Sprite::setScale(const Vec2 &scale) {
   m_scale = scale;
 }
 
-void Sprite::setScale(float x, float y, float z) {
+void Sprite::setScale(float x, float y) {
   m_scale.x = x;
   m_scale.y = y;
-  m_scale.z = z;
 }
 
 void Sprite::setScaleX(float x) {
@@ -92,10 +85,6 @@ void Sprite::setScaleX(float x) {
 
 void Sprite::setScaleY(float y) {
   m_scale.y = y;
-}
-
-void Sprite::setScaleZ(float z) {
-  m_scale.z = z;
 }
 
 void Sprite::setTextureData(uint8_t* data) {
@@ -116,8 +105,4 @@ uint32_t Sprite::getTextureWidth() const {
 
 uint32_t Sprite::getTextureHeight() const {
   return m_texture_height;
-}
-
-void Sprite::update(float dt) {
-    
 }

@@ -12,6 +12,7 @@
 #endif
 
 #include <ball.h>
+#include <paddle.h>
 #include <sprite.h>
 #include <utils.h>
 
@@ -27,6 +28,8 @@ public:
 
   void update(float dt);
   void draw();
+
+  static Vec2 m_player_starting_position;
 
   static uint32_t m_render_width;
   static uint32_t m_render_height;
@@ -61,6 +64,7 @@ private:
 
   OpenGLData m_opengl_data;
   std::vector<Ball> m_balls;
+  Paddle m_player;
 };
 
 #endif // __GAME_H__

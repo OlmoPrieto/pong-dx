@@ -96,6 +96,9 @@ uint32_t Game::m_render_height = 720;
 uint32_t Game::m_render_desired_width = 720;
 uint32_t Game::m_render_desired_height = 480;
 
+Vec2 Game::m_player_starting_position((float)(m_render_width) * 0.875f, 
+  (float)(m_render_height) * 0.5f);
+
 Game::~Game() {
 
 }
@@ -107,8 +110,13 @@ Game* Game::Instance() {
 }
 
 void Game::update(float dt) {
+  m_player.update(dt);
+
   for (uint32_t i = 0; i < m_balls.size(); ++i) {
     m_balls[i].update(16.0f);
+    if (m_player.checkCollision(&m_balls[i])) {
+      m_balls[i].m_velocity.x *= -1.0f;
+    }
   }
 }
 
@@ -129,6 +137,8 @@ void Game::draw() {
   // glBindBuffer(GL_ARRAY_BUFFER, 0);
   // [\RENDER TEST]
 
+  drawSprite(&m_player.m_sprite);
+
   for (uint32_t i = 0; i < m_balls.size(); ++i) {
     drawSprite(&m_balls[i].m_sprite);
   }
@@ -143,8 +153,8 @@ void Game::drawSprite(Sprite* sprite) {
 
   glBindBuffer(GL_ARRAY_BUFFER, m_opengl_data.m_vertices_index);
 
-  Vec3 scale = sprite->getScale();
-  Vec3 pos = sprite->getPosition();
+  Vec3 scale = Vec3(sprite->getScale(), 0.0f);
+  Vec3 pos = Vec3(sprite->getPosition(), 0.0f);
   Vec3 vertices[4] = {
     {
       m_opengl_data.m_vertices[0].x * scale.x + pos.x, 

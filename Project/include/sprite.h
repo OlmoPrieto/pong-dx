@@ -20,21 +20,19 @@ public:
   ~Sprite();
 
   Color getColor() const;
-  Vec3 getPosition() const;
-  Vec3 getScale() const;
+  Vec2 getPosition() const;
+  Vec2 getScale() const;
 
   void setColor(const Color& color);  // The color is the tint (used in the shader)
   void setColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a);  // The color is the tint (used in the shader)
-  void setPosition(const Vec3& position);
-  void setPosition(float x, float y, float z);
+  void setPosition(const Vec2& position);
+  void setPosition(float x, float y);
   void setPositionX(float x);
   void setPositionY(float y);
-  void setPositionZ(float z);
-  void setScale(const Vec3& scale);
-  void setScale(float x, float y, float z);
+  void setScale(const Vec2& scale);
+  void setScale(float x, float y);
   void setScaleX(float x);
   void setScaleY(float y);
-  void setScaleZ(float z);
 
   void setTextureData(uint8_t* data);
 
@@ -43,11 +41,9 @@ public:
   uint32_t getTextureWidth() const;
   uint32_t getTextureHeight() const;
 
-  void update(float dt);
-
   // public variables
-  Vec3 m_position;
-  Vec3 m_scale;
+  Vec2 m_position;
+  Vec2 m_scale;
   Color m_color;  // m_color is now used as tint in the shader
 
   uint32_t m_texture_width = 0;
