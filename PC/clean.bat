@@ -1,11 +1,19 @@
-del Engine.sdf
-del Engine.opensdf
-del Engine.sln
-del Engine.v12.suo
+del Project.sdf
+ 
+del Project.opensdf 
 
-del Engine\Engine.vcxproj
-del Engine\Engine.vcxproj.filters
-del Engine\Engine.vcxproj.user
+del Project.sln 
 
-rd /Q Engine\bin
-rd /Q Engine\obj
+del Project.v12.suo
+
+ 
+del Project\Project.vcxproj
+
+del Project\Project.vcxproj.filters
+
+del Project\Project.vcxproj.user
+
+
+rmdir obj /s
+ /Q
+rmdir.vs /s /Q

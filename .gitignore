@@ -6,6 +6,7 @@
 *.lo
 *.o
 *.obj
+*/obj
 
 # Precompiled Headers
 *.gch
@@ -30,3 +31,16 @@
 *.exe
 *.out
 *.app
+*/bin
+
+# Windows
+*.sln
+#*.log
+*.tlog
+*.idb
+*.pdb
+*.lastbuildstate
+*.vs
+*.vcxproj
+*.filters
+*.user

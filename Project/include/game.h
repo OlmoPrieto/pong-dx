@@ -5,6 +5,8 @@
   #include <OpenGL/gl3.h>
 #elif __PLATFORM_LINUX__
   #include <glew/include/GL/glew.h>
+#elif __PLATFORM_WINDOWS__
+  #include <glew/include/GL/glew.h>
 #elif __PLATFORM_ANDROID__
   #include <GLES2/gl2.h>
 #endif

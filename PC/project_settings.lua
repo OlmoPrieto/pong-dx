@@ -44,7 +44,12 @@ solution "Project"
     -- files{ group = "src", "./Project/src/**.cc", "./Project/src/**.cpp" } -- src filter and get the files
     files{ group = "include", pd .."/include/**.h" } -- include filter and get the files
     files{ group = "src", pd .."/src/**.cc", pd .."/src/**.cpp" } -- src filter and get the files
-    
+    excludes {
+      -- temporal exclude until windows support for sockets is implemented
+      pd .. "/include/sockets.h",
+      pd .. "/src/sockets.cpp"
+    }
+
     -- only when compiling as library
     --defines { "GLEW_STATIC" }
   
@@ -79,6 +84,7 @@ solution "Project"
           pd .. "/dependencies/GLFW/src/winmm_joystick.c",
         --pd .. "dependencies/GLFW/include/GLFW/glfw3.h"
       }
+      
       links {
         "opengl32"
       }

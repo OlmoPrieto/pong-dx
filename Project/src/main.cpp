@@ -5,8 +5,9 @@
 
 #ifdef __PLATFORM_MACOSX__
   #include <OpenGL/gl3.h>
-#endif
-#ifdef __PLATFORM_LINUX__
+#elif __PLATFORM_LINUX__
+  #include <glew/include/GL/glew.h>
+#elif __PLATFORM_WINDOWS__
   #include <glew/include/GL/glew.h>
 #endif
 #include <GLFW/include/glfw3.h>
@@ -55,6 +56,8 @@ void InitializeGraphics() {
   glfwSetKeyCallback(g_window, KeyCallback);
 
   #ifdef __PLATFORM_LINUX__
+    glewInit();
+  #elif __PLATFORM_WINDOWS__
     glewInit();
   #endif
 }
