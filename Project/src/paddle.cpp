@@ -22,8 +22,10 @@ Paddle::~Paddle() {
 }
 
 bool Paddle::checkCollision(Ball* ball) {
-  Vec2 pos = m_sprite.getPosition();
-  Vec2 scale = m_sprite.getScale();
+  // Vec2 pos = m_sprite.getPosition();
+  // Vec2 scale = m_sprite.getScale();
+  Vec2 pos = m_sprite.m_position;
+  Vec2 scale = m_sprite.m_scale;
   Vec2 other_pos = ball->m_sprite.m_position;
   Vec2 other_scale = ball->m_sprite.m_scale;
 

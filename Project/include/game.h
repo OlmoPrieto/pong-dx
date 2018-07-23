@@ -35,9 +35,6 @@ public:
   static uint32_t m_render_width;
   static uint32_t m_render_height;
 
-  static uint32_t m_render_desired_width;
-  static uint32_t m_render_desired_height;
-
 private:
   struct OpenGLData {
     Mat4 m_projection;

@@ -92,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // The code below hides status and navigation bar
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);

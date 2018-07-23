@@ -73,16 +73,8 @@ R"END(
 
   void main() {
     //gl_FragColor = color * vec4(o_uv.x, o_uv.y, 0.0, 1.0);
-)END"
-//#ifdef __PLATFORM_ANDROID__
-R"END(
     gl_FragColor = texture2D(tex, o_uv) * color;
 )END"
-// #else
-// R"END(
-//     gl_FragColor = texture(tex, o_uv) * color;
-// )END"
-// #endif
 R"END(
   }
 )END";
@@ -90,9 +82,6 @@ R"END(
 
 uint32_t Game::m_render_width  = 1080;
 uint32_t Game::m_render_height = 720;
-
-uint32_t Game::m_render_desired_width = 720;
-uint32_t Game::m_render_desired_height = 480;
 
 Vec2 Game::m_player_starting_position((float)(m_render_width) * 0.875f, 
   (float)(m_render_height) * 0.5f);
