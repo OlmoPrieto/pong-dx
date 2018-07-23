@@ -90,8 +90,6 @@ R"END(
 
 uint32_t Game::m_render_width  = 1080;
 uint32_t Game::m_render_height = 720;
-// uint32_t Game::m_render_width  = 480;
-// uint32_t Game::m_render_height = 640;
 
 uint32_t Game::m_render_desired_width = 720;
 uint32_t Game::m_render_desired_height = 480;
@@ -109,6 +107,14 @@ Game* Game::Instance() {
   return &game;
 }
 
+void Game::setRenderSize(uint32_t width, uint32_t height) {
+  m_render_width = width;
+  m_render_height = height;
+
+  m_player_starting_position = Vec2((float)width * 0.875f, 
+    (float)height * 0.5f);
+}
+
 void Game::update(float dt) {
   m_player.update(dt);
 
@@ -124,18 +130,6 @@ void Game::draw() {
   update(16.0f);
 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-  // [RENDER TEST]
-  // glUniform4f(m_opengl_data.m_color_location, 1.0f, 0.0f, 0.0f, 1.0f);
-
-  // glBindBuffer(GL_ARRAY_BUFFER, m_opengl_data.m_vertices_index);
-  // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_opengl_data.m_indices_index);
-
-  // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, m_opengl_data.m_indices);
-  
-  // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-  // glBindBuffer(GL_ARRAY_BUFFER, 0);
-  // [\RENDER TEST]
 
   drawSprite(&m_player.m_sprite);
 

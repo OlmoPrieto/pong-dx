@@ -25,6 +25,7 @@ public:
   void operator = (const Game& other) = delete;
 
   static Game* Instance();
+  static void setRenderSize(uint32_t width, uint32_t height);
 
   void update(float dt);
   void draw();

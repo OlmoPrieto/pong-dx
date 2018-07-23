@@ -14,7 +14,6 @@ Paddle::Paddle() {
   m_sprite.m_scale.x = x_scale;
   m_sprite.m_scale.y = y_scale;
 
-  printf("%.2f %.2f\n", Game::m_player_starting_position.x, Game::m_player_starting_position.y);
   m_sprite.m_position = Game::m_player_starting_position;
 }
 
