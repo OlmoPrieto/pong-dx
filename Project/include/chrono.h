@@ -7,6 +7,12 @@ class Chrono {
 public: 
   Chrono() {
   }
+  Chrono(const Chrono& other) {
+    m_cTime = other.m_cTime;
+    m_cClock = other.m_cClock;
+    m_cStart = other.m_cStart;
+    m_cEnd = other.m_cEnd;
+  }
   ~Chrono() {
   }
   void start() {

@@ -12,10 +12,12 @@
 #endif
 
 #include <ball.h>
+#include <chrono.h>
 #include <paddle.h>
 #include <sprite.h>
 #include <utils.h>
 
+#include <chrono>
 #include <vector>
 
 class Game {
@@ -26,6 +28,8 @@ public:
 
   static Game* Instance();
   static void setRenderSize(uint32_t width, uint32_t height);
+
+  float msSinceStart();
 
   void update(float dt);
   void draw();
@@ -63,6 +67,12 @@ private:
   OpenGLData m_opengl_data;
   std::vector<Ball> m_balls;
   Paddle m_player;
+  Chrono m_timer;
+  std::chrono::high_resolution_clock m_frame_clock;
+  std::chrono::high_resolution_clock::time_point m_time1;
+  std::chrono::high_resolution_clock::time_point m_time2;
+
+  float m_last_frame_time;
 };
 
 #endif // __GAME_H__

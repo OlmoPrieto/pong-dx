@@ -1,5 +1,7 @@
 #include <game.h>
+
 #include <iostream>
+#include <thread>
 
 // ========================================================================
 static bool CheckGLError(const char* tag = "") {
@@ -104,11 +106,23 @@ void Game::setRenderSize(uint32_t width, uint32_t height) {
     (float)height * 0.5f);
 }
 
+float Game::msSinceStart() {
+  Chrono c;
+  c = m_timer;
+  m_timer.stop();
+  float ms = m_timer.timeAsMilliseconds();
+  m_timer = c;
+
+  return ms;
+}
+
 void Game::update(float dt) {
+  m_time1 = m_frame_clock.now();
+
   m_player.update(dt);
 
   for (uint32_t i = 0; i < m_balls.size(); ++i) {
-    m_balls[i].update(16.0f);
+    m_balls[i].update(m_last_frame_time);
     if (m_player.checkCollision(&m_balls[i])) {
       m_balls[i].m_velocity.x *= -1.0f;
     }
@@ -116,7 +130,7 @@ void Game::update(float dt) {
 }
 
 void Game::draw() {
-  update(16.0f);
+  update(m_last_frame_time);
 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -125,6 +139,21 @@ void Game::draw() {
   for (uint32_t i = 0; i < m_balls.size(); ++i) {
     drawSprite(&m_balls[i].m_sprite);
   }
+
+  // Lock framerate to 60fps
+  m_time2 = m_frame_clock.now();
+  m_last_frame_time = std::chrono::duration_cast<std::chrono::duration<float> >(m_time2 - m_time1).count();
+  m_time1 = m_frame_clock.now();
+
+  if (m_last_frame_time < 16.6666f) {
+    std::this_thread::sleep_for(std::chrono::duration<float, std::milli>(8.3333f));
+  }
+  while (m_last_frame_time <= 16.6666f) {
+    m_time2 = m_frame_clock.now();
+    m_last_frame_time += std::chrono::duration_cast<std::chrono::duration<float> >(m_time2 - m_time1).count();
+  }
+
+  printf("Frame time: %.2f\n", m_last_frame_time);
 }
 
 void Game::drawSprite(Sprite* sprite) {
@@ -171,6 +200,9 @@ void Game::drawSprite(Sprite* sprite) {
 }
 
 Game::Game() {
+  m_timer.start();
+  m_last_frame_time = 16.6666f; // fake time for first frame
+
   init();
 }
 
