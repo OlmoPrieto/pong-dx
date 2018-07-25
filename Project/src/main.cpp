@@ -2,6 +2,7 @@
 
 #include <chrono.h>
 #include <game.h>
+#include <input.h>
 
 #ifdef __PLATFORM_MACOSX__
   #include <OpenGL/gl3.h>
@@ -67,17 +68,44 @@ int main() {
 
   Game* game = Game::Instance();
 
+  // TODO: if making a pause mode in Game, make the cursor
+  // to reappear when pausing the game and to hide
+  // when resuming the game
+  // -----------------------------------------------------------
+  //glfwSetInputMode(g_window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+
   Chrono c;
   while (!glfwWindowShouldClose(g_window)) {
-    c.start();
+    glfwPollEvents();
+
+    // ============ |Query input and register glfwPollEvents | ===============
+    double x_pos = 0.0, y_pos = 0.0;
+    glfwGetCursorPos(g_window, &x_pos, &y_pos);
+
+    int32_t state = glfwGetMouseButton(g_window, GLFW_MOUSE_BUTTON_LEFT);
+    Input::Event::Type event_type = Input::Event::Type::None;
+    if (state == GLFW_PRESS) {
+      event_type = Input::Event::Type::Down;
+    }
+    else if (state == GLFW_RELEASE) {
+      event_type = Input::Event::Type::Up;
+    }
+
+    if (event_type != Input::Event::Type::None) {
+      Input::registerEvent((float)x_pos, (float)y_pos, game->msSinceStart(),
+        event_type);
+    }
+
+    Input::registerEvent((float)x_pos, (float)y_pos, game->msSinceStart(), 
+      Input::Event::Type::Move);
+
+    // =======================================================================
+
 
     game->draw();
 
     glfwSwapBuffers(g_window);
-    glfwPollEvents();
-
-    c.stop();
-    //printf("Frame time: %.2f ms\n", c.timeAsMilliseconds());
+    //glfwPollEvents();
   }
 
   return 0;

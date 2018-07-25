@@ -162,7 +162,7 @@ void Game::draw() {
     m_last_frame_time += std::chrono::duration_cast<std::chrono::duration<float> >(m_time2 - m_time1).count();
   }
 
-  printf("Frame time: %.2f\n", m_last_frame_time);
+  //printf("Frame time: %.2f\n", m_last_frame_time);
 }
 
 void Game::drawSprite(Sprite* sprite) {

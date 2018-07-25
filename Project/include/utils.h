@@ -2,9 +2,25 @@
 #define __UTILS_H__
 
 #include <chrono>
+#include <cstdarg>
 #include <cstdint>
 #include <cstring>
 #include <random>
+
+#ifdef __PLATFORM_ANDROID__
+  #include <android/log.h>
+  static void printff(const char* format, ...) {
+    va_list list;
+    va_start(list, format);
+    __android_log_print(ANDROID_LOG_INFO, "PONG-DX", format, va_arg(list, char*));
+  }
+#else
+  static void printff(const char* format, ...) {
+    va_list list;
+    va_start(list, format);
+    printf(format, va_arg(list, char*));
+  }
+#endif
 
 static std::mt19937 g_random_generator;
 static bool g_random_generator_seeded = false;
