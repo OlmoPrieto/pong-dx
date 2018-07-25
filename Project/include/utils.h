@@ -66,6 +66,18 @@ struct Vec2 {
     return r;
   }
 
+  bool operator == (float a) {
+    if (x == a && y == a) {
+      return true;
+    }
+
+    return false;
+  }
+
+  bool operator != (float a) {
+    return !operator==(a);
+  }
+
 };
 
 struct Vec3 {

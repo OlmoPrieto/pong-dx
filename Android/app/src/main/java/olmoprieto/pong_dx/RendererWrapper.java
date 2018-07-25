@@ -2,6 +2,7 @@ package olmoprieto.pong_dx;
 
 
 import android.opengl.GLSurfaceView.Renderer;
+import android.util.EventLog;
 import android.util.Log;
 import android.view.MotionEvent;
 
@@ -34,8 +35,8 @@ public class RendererWrapper implements Renderer {
         GameLibJNIWrapper.onDrawFrame();
     }
 
-    public void onTouchEvent(float x, float y) {
-        GameLibJNIWrapper.onTouchEvent(x, y);
+    public void onTouchEvent(float x, float y, float time_stamp, MainActivity.EventType type) {
+        GameLibJNIWrapper.onTouchEvent(x, y, time_stamp, type);
     }
 
 }

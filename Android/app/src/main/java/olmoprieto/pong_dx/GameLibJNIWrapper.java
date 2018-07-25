@@ -8,5 +8,5 @@ public class GameLibJNIWrapper {
     public static native void onSurfaceCreated(int width, int height);
     public static native void onSurfaceChanged(int width, int height);
     public static native void onDrawFrame();
-    public static native void onTouchEvent(float x, float y);
+    public static native void onTouchEvent(float x, float y, float time_stamp, MainActivity.EventType type);
 }

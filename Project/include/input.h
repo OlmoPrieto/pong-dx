@@ -8,27 +8,35 @@
 class Input {
 public:
   struct Event {
+    enum Type {
+      None = 0,
+      Down = 1,
+      Up = 2,
+      Move = 3
+    } type ;
+
     float x;
     float y;
     float time_stamp;
 
     Event() : x(0.0f), y(0.0f), time_stamp(0.0f) {}
-    Event(float x, float y, float time_stamp) :
-      x(x), y(y), time_stamp(time_stamp) {}
+    Event(float x, float y, float time_stamp, Type type) :
+      x(x), y(y), time_stamp(time_stamp), type(type) {}
   };
 
   ~Input();
+
+  static void registerEvent(const Event& event);
+  static void registerEvent(float x, float y, float time_stamp, int32_t type);
 
   static Vec2 getCursorPos();
   static bool tapped();
   static bool isScreenPressed();
 
-  static void registerEvent(const Event& event);
-
 private:
   Input();
 
-  std::queue<Event> m_events;
+  static std::queue<Event> m_events;
 };
 
 #endif // __INPUT_H__

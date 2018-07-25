@@ -3,6 +3,7 @@
 //
 
 #include "../../../../../Project/include/game.h"
+#include "../../../../../Project/include/input.h"
 #include <jni.h>
 
 #ifdef __cplusplus
@@ -28,9 +29,9 @@ JNIEXPORT void JNICALL Java_olmoprieto_pong_1dx_GameLibJNIWrapper_onDrawFrame
 }
 
 JNIEXPORT void JNICALL Java_olmoprieto_pong_1dx_GameLibJNIWrapper_onTouchEvent
-        (JNIEnv *env, jclass clss, jfloat x, jfloat y) {
+        (JNIEnv *env, jclass clss, jfloat x, jfloat y, jfloat time_stamp, jint type) {
 
-    //Game::Instance()->registerEvent(x, y);
+    Input::registerEvent(x, y, time_stamp, type);
 }
 
 #ifdef __cplusplus

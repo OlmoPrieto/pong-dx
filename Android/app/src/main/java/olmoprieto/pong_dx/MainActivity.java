@@ -22,6 +22,13 @@ public class MainActivity extends AppCompatActivity {
     private RendererWrapper rendererWrapper;
     private boolean rendererSet;
 
+    enum EventType {
+        None,
+        Down,
+        Up,
+        Move
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,17 +68,42 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onTouchEvent(MotionEvent me) {
+        boolean consumed_event = false;
         switch (me.getAction()) {
             case MotionEvent.ACTION_DOWN : {
 
-                rendererWrapper.onTouchEvent(me.getX(), me.getY());
+                rendererWrapper.onTouchEvent(me.getX(), me.getY(), me.getEventTime(), EventType.Down);
+                consumed_event = true;
 
-                return true;
-                //break;
+                break;
+            }
+            case MotionEvent.ACTION_MOVE : {
+                final int history_size = me.getHistorySize();
+                final int pointer_count = me.getPointerCount();
+                for (int i = 0; i < history_size; ++i) {
+                    //Log.d("LOG", "Time: " + me.getHistoricalEventTime(i));
+                    for (int j = 0; j < pointer_count; ++j) {
+                        rendererWrapper.onTouchEvent(me.getHistoricalX(j, i),
+                                me.getHistoricalY(j, i), me.getHistoricalEventTime(i), EventType.Move);
+                    }
+                }
+                for (int i = 0; i < pointer_count; ++i) {
+                    rendererWrapper.onTouchEvent(me.getX(), me.getY(), me.getEventTime(), EventType.Move);
+                }
+
+                consumed_event = true;
+
+                break;
+            }
+            case MotionEvent.ACTION_UP : {
+                rendererWrapper.onTouchEvent(me.getX(), me.getY(), me.getEventTime(), EventType.Up);
+                consumed_event = true;
+
+                break;
             }
         }
 
-        return false;
+        return consumed_event;
     }
 
     @Override

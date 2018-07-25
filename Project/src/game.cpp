@@ -1,5 +1,7 @@
 #include <game.h>
 
+#include <input.h>
+
 #include <iostream>
 #include <thread>
 
@@ -119,6 +121,13 @@ float Game::msSinceStart() {
 void Game::update(float dt) {
   m_time1 = m_frame_clock.now();
 
+  // Query inputs
+  Vec2 pos = Input::getCursorPos();
+  if (pos != 0) {
+    m_player.m_sprite.m_position.y = pos.y;
+  }
+
+  // Actual updates
   m_player.update(dt);
 
   for (uint32_t i = 0; i < m_balls.size(); ++i) {
