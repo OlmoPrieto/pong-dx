@@ -80,13 +80,13 @@ public class MainActivity extends AppCompatActivity {
             case MotionEvent.ACTION_MOVE : {
                 final int history_size = me.getHistorySize();
                 final int pointer_count = me.getPointerCount();
-                for (int i = 0; i < history_size; ++i) {
-                    //Log.d("LOG", "Time: " + me.getHistoricalEventTime(i));
-                    for (int j = 0; j < pointer_count; ++j) {
-                        rendererWrapper.onTouchEvent(me.getHistoricalX(j, i),
-                                me.getHistoricalY(j, i), me.getHistoricalEventTime(i), EventType.Move);
-                    }
-                }
+//                for (int i = 0; i < history_size; ++i) {
+//                    //Log.d("LOG", "Time: " + me.getHistoricalEventTime(i));
+//                    for (int j = 0; j < pointer_count; ++j) {
+//                        rendererWrapper.onTouchEvent(me.getHistoricalX(j, i),
+//                                me.getHistoricalY(j, i), me.getHistoricalEventTime(i), EventType.Move);
+//                    }
+//                }
                 for (int i = 0; i < pointer_count; ++i) {
                     rendererWrapper.onTouchEvent(me.getX(), me.getY(), me.getEventTime(), EventType.Move);
                 }

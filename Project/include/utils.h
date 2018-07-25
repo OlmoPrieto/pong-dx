@@ -24,7 +24,7 @@
 
 static std::mt19937 g_random_generator;
 static bool g_random_generator_seeded = false;
-static uint32_t RandomNumber(int32_t min = 0, int32_t max = 35536) {
+static int32_t RandomNumber(int32_t min = 0, int32_t max = 4294967296) {
   if (g_random_generator_seeded == false) {
       g_random_generator.seed(std::chrono::duration_cast<std::chrono::duration<int32_t > >(std::chrono::high_resolution_clock::now().time_since_epoch()).count());
 

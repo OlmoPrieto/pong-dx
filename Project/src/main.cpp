@@ -78,7 +78,7 @@ int main() {
   while (!glfwWindowShouldClose(g_window)) {
     glfwPollEvents();
 
-    // ============ |Query input and register glfwPollEvents | ===============
+    // ============== | Query input and register glfw Events | ===============
     double x_pos = 0.0, y_pos = 0.0;
     glfwGetCursorPos(g_window, &x_pos, &y_pos);
 

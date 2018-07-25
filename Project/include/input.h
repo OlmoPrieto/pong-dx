@@ -3,7 +3,7 @@
 
 #include <utils.h>
 
-#include <queue>
+#include <deque>
 
 class Input {
 public:
@@ -36,7 +36,7 @@ public:
 private:
   Input();
 
-  static std::queue<Event> m_events;
+  static std::deque<Event> m_events;
 };
 
 #endif // __INPUT_H__
