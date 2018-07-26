@@ -35,7 +35,7 @@ public class RendererWrapper implements Renderer {
         GameLibJNIWrapper.onDrawFrame();
     }
 
-    public void onTouchEvent(float x, float y, float time_stamp, MainActivity.EventType type) {
+    public void onTouchEvent(float x, float y, float time_stamp, int type) {
         GameLibJNIWrapper.onTouchEvent(x, y, time_stamp, type);
     }
 

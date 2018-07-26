@@ -123,7 +123,7 @@ void Game::update(float dt) {
 
   // Query inputs
   Vec2 pos = Input::getCursorPos();
-  if (pos != 0) {
+  if (pos != 0 && Input::isScreenPressed()) {
     m_player.m_sprite.m_position.y = pos.y;
   }
 

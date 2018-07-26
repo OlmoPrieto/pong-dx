@@ -37,6 +37,7 @@ private:
   Input();
 
   static std::deque<Event> m_events;
+  static bool m_screen_pressed;
 };
 
 #endif // __INPUT_H__

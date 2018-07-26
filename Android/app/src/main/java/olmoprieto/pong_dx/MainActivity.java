@@ -7,6 +7,7 @@ import android.content.pm.ConfigurationInfo;
 import android.opengl.GLSurfaceView;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.EventLog;
 import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
@@ -72,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
         switch (me.getAction()) {
             case MotionEvent.ACTION_DOWN : {
 
-                rendererWrapper.onTouchEvent(me.getX(), me.getY(), me.getEventTime(), EventType.Down);
+                rendererWrapper.onTouchEvent(me.getX(), me.getY(), me.getEventTime(), getEventTypeID(EventType.Down));
                 consumed_event = true;
 
                 break;
@@ -80,15 +81,14 @@ public class MainActivity extends AppCompatActivity {
             case MotionEvent.ACTION_MOVE : {
                 final int history_size = me.getHistorySize();
                 final int pointer_count = me.getPointerCount();
-//                for (int i = 0; i < history_size; ++i) {
-//                    //Log.d("LOG", "Time: " + me.getHistoricalEventTime(i));
-//                    for (int j = 0; j < pointer_count; ++j) {
-//                        rendererWrapper.onTouchEvent(me.getHistoricalX(j, i),
-//                                me.getHistoricalY(j, i), me.getHistoricalEventTime(i), EventType.Move);
-//                    }
-//                }
+                for (int i = 0; i < history_size; ++i) {
+                    for (int j = 0; j < pointer_count; ++j) {
+                        rendererWrapper.onTouchEvent(me.getHistoricalX(j, i),
+                                me.getHistoricalY(j, i), me.getHistoricalEventTime(i), getEventTypeID(EventType.Move));
+                    }
+                }
                 for (int i = 0; i < pointer_count; ++i) {
-                    rendererWrapper.onTouchEvent(me.getX(), me.getY(), me.getEventTime(), EventType.Move);
+                    rendererWrapper.onTouchEvent(me.getX(), me.getY(), me.getEventTime(), getEventTypeID(EventType.Move));
                 }
 
                 consumed_event = true;
@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             }
             case MotionEvent.ACTION_UP : {
-                rendererWrapper.onTouchEvent(me.getX(), me.getY(), me.getEventTime(), EventType.Up);
+                rendererWrapper.onTouchEvent(me.getX(), me.getY(), me.getEventTime(), getEventTypeID(EventType.Up));
                 consumed_event = true;
 
                 break;
@@ -140,5 +140,24 @@ public class MainActivity extends AppCompatActivity {
                 View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                         | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_FULLSCREEN);
+    }
+
+    private int getEventTypeID(EventType type) {
+        switch (type) {
+            case None: {
+                return 0;
+            }
+            case Down: {
+                return 1;
+            }
+            case Up: {
+                return 2;
+            }
+            case Move: {
+                return 3;
+            }
+        }
+
+        return -1;
     }
 }

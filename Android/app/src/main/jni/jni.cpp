@@ -5,6 +5,7 @@
 #include "../../../../../Project/include/game.h"
 #include "../../../../../Project/include/input.h"
 #include <jni.h>
+#include <android/log.h>
 
 #ifdef __cplusplus
 extern "C" {
