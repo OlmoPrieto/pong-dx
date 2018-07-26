@@ -122,6 +122,10 @@ void Game::update(float dt) {
   m_time1 = m_frame_clock.now();
 
   // Query inputs
+  if (Input::tapped()) {
+    printff("TAPPPPEEEEED BROOOO\n");
+  }
+
   Vec2 pos = Input::getCursorPos();
   if (pos != 0 && Input::isScreenPressed()) {
     m_player.m_sprite.m_position.y = pos.y;

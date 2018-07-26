@@ -38,6 +38,9 @@ private:
 
   static std::deque<Event> m_events;
   static bool m_screen_pressed;
+  static bool m_begin_tap;
+  static uint32_t m_begin_tap_index;
+  static uint32_t m_end_tap_index;
 };
 
 #endif // __INPUT_H__

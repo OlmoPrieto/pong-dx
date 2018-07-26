@@ -75,11 +75,12 @@ int main() {
   //glfwSetInputMode(g_window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 
   Chrono c;
+  double prev_x_pos = 0.0, prev_y_pos = 0.0;
+  double x_pos = 0.0, y_pos = 0.0;
   while (!glfwWindowShouldClose(g_window)) {
     glfwPollEvents();
 
     // ============== | Query input and register glfw Events | ===============
-    double x_pos = 0.0, y_pos = 0.0;
     glfwGetCursorPos(g_window, &x_pos, &y_pos);
 
     int32_t state = glfwGetMouseButton(g_window, GLFW_MOUSE_BUTTON_LEFT);
@@ -96,9 +97,13 @@ int main() {
         event_type);
     }
 
-    Input::registerEvent((float)x_pos, (float)y_pos, game->msSinceStart(), 
-      Input::Event::Type::Move);
+    if (x_pos != prev_x_pos || y_pos != prev_y_pos) {
+      Input::registerEvent((float)x_pos, (float)y_pos, game->msSinceStart(), 
+        Input::Event::Type::Move);
+    }
 
+    prev_x_pos = x_pos;
+    prev_y_pos = y_pos;
     // =======================================================================
 
 
