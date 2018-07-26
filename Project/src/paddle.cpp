@@ -22,12 +22,15 @@ Paddle::~Paddle() {
 }
 
 bool Paddle::checkCollision(Ball* ball) {
-  // Vec2 pos = m_sprite.getPosition();
-  // Vec2 scale = m_sprite.getScale();
   Vec2 pos = m_sprite.m_position;
   Vec2 scale = m_sprite.m_scale;
   Vec2 other_pos = ball->m_sprite.m_position;
   Vec2 other_scale = ball->m_sprite.m_scale;
+
+  // Vec2 pos = m_sprite.getPosition();
+  // Vec2 scale = m_sprite.getScale();
+  // Vec2 other_pos = ball->m_sprite.getPosition();
+  // Vec2 other_scale = ball->m_sprite.getScale();
 
   float d_x = fabs(pos.x - other_pos.x);
   float d_y = fabs(pos.y - other_pos.y);
@@ -48,6 +51,24 @@ bool Paddle::checkCollision(Ball* ball) {
   }
 
   return false;
+}
+
+void Paddle::placeBallAtCollisionPoint(Ball* ball) {
+  float last_dt_percentage = Game::Instance()->m_last_frame_time * 0.1f;
+
+  Vec2 prev_vel = ball->m_velocity;
+  Vec2 vel = prev_vel;
+  vel *= -1.0f;
+  ball->move(ball->m_last_position, last_dt_percentage);
+  ball->move(ball->m_sprite.m_position, last_dt_percentage);  
+  //ball->move(ball->m_sprite.m_position, last_dt_percentage);  
+  //ball->move(ball->m_sprite.m_position, last_dt_percentage);  
+
+  ball->m_velocity = prev_vel;
+  //ball->move(ball->m_last_position, last_dt_percentage);
+  while (!checkCollision(ball)) {
+    ball->move(ball->m_sprite.m_position, last_dt_percentage);
+  }
 }
 
 void Paddle::update(float dt) {

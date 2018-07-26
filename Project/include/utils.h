@@ -71,6 +71,12 @@ struct Vec2 {
     return r;
   }
 
+  Vec2 operator + (const Vec2& other) {
+    Vec2 r(*this);
+    r.x += other.x; r.y += other.y;
+    return r;
+  }
+
   Vec2& operator *= (float a) {
     x *= a; y *= a;
     return *this;

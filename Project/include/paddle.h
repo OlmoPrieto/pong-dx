@@ -11,12 +11,15 @@ public:
   ~Paddle();
 
   bool checkCollision(Ball* ball);
+  void placeBallAtCollisionPoint(Ball* ball);
 
   void update(float dt);
 
   Sprite m_sprite;
   float m_y_vel = 0.0f;
   bool m_player_controlled = false;
+
+private:
 };
 
 #endif // __PADDLE_H__

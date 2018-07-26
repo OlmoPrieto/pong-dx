@@ -39,6 +39,8 @@ public:
   static uint32_t m_render_width;
   static uint32_t m_render_height;
 
+  float m_last_frame_time;
+
 private:
   struct OpenGLData {
     Mat4 m_projection;
@@ -71,8 +73,6 @@ private:
   std::chrono::high_resolution_clock m_frame_clock;
   std::chrono::high_resolution_clock::time_point m_time1;
   std::chrono::high_resolution_clock::time_point m_time2;
-
-  float m_last_frame_time;
 };
 
 #endif // __GAME_H__

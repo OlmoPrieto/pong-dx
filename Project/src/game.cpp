@@ -122,10 +122,6 @@ void Game::update(float dt) {
   m_time1 = m_frame_clock.now();
 
   // Query inputs
-  if (Input::tapped()) {
-    printff("TAPPPPEEEEED BROOOO\n");
-  }
-
   Vec2 pos = Input::getCursorPos();
   if (pos != 0 && Input::isScreenPressed()) {
     m_player.m_sprite.m_position.y = pos.y;
@@ -137,7 +133,12 @@ void Game::update(float dt) {
   for (uint32_t i = 0; i < m_balls.size(); ++i) {
     m_balls[i].update(m_last_frame_time);
     if (m_player.checkCollision(&m_balls[i])) {
-      m_balls[i].m_velocity.x *= -1.0f;
+      //m_balls[i].m_velocity.x *= -1.0f;
+
+      //m_player.placeBallAtCollisionPoint(&m_balls[i]);
+      m_balls[i].m_sprite.m_position = m_balls[i].m_last_position;
+      m_balls[i].m_velocity.x = 0.0f;
+      m_balls[i].m_velocity.y = 0.0f;
     }
   }
 }

@@ -3,7 +3,7 @@
 #include <game.h>
 
 Ball::Ball() {
-  m_speed = 0.2f;
+  m_speed = 0.5f;
   // m_velocity.x = (float)RandomNumber(0, 100) * 0.01f;
   // m_velocity.y = (float)RandomNumber(0, 100) * 0.01f;
   m_velocity.x = 1.0f;
@@ -38,6 +38,7 @@ void Ball::update(float dt) {
   Vec2 pos = m_sprite.getPosition();
   Vec2 scale = m_sprite.getScale();
 
+  // Check bounce with walls
   if (pos.x - scale.x < 0.0f || pos.x + scale.x > Game::m_render_width) {
     m_velocity.x = -m_velocity.x;
     m_speed *= 1.05f;
@@ -47,5 +48,14 @@ void Ball::update(float dt) {
     m_speed *= 1.05f;
   }
   
-  m_sprite.m_position += m_velocity * m_speed * dt;
+  m_last_position = m_sprite.m_position;
+  // Update movement
+  //m_sprite.m_position += m_velocity * m_speed * dt;
+  move(m_sprite.m_position, dt);
+
+  //m_last_position = m_sprite.m_position;
+}
+
+void Ball::move(const Vec2& from, float dt) {
+  m_sprite.m_position = m_velocity * m_speed * dt + from;
 }
