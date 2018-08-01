@@ -16,7 +16,8 @@ public:
   void update(float dt);
 
   Sprite m_sprite;
-  float m_y_vel = 0.0f;
+  Vec2 m_last_position;
+  float m_y_velocity = 0.0f;
   bool m_player_controlled = false;
 
 private:

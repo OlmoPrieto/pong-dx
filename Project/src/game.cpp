@@ -122,24 +122,33 @@ void Game::update(float dt) {
   m_time1 = m_frame_clock.now();
 
   // Query inputs
-  Vec2 pos = Input::getCursorPos();
-  if (pos != 0 && Input::isScreenPressed()) {
-    m_player.m_sprite.m_position.y = pos.y;
-  }
+  // Vec2 pos = Input::getCursorPos();
+  // if (pos != 0 && Input::isScreenPressed()) {
+  //   m_player.m_sprite.m_position.y = pos.y;
+  // }
 
   // Actual updates
   m_player.update(dt);
 
+  Ball* ball = nullptr;
   for (uint32_t i = 0; i < m_balls.size(); ++i) {
-    m_balls[i].update(m_last_frame_time);
-    if (m_player.checkCollision(&m_balls[i])) {
-      m_player.placeBallAtCollisionPoint(&m_balls[i]);
-      
-      //m_balls[i].m_sprite.m_position = m_balls[i].m_last_position;
-      //m_balls[i].m_velocity.x = 0.0f;
-      //m_balls[i].m_velocity.y = 0.0f;
+    // CAREFUL: if the vector reallocates elements in 
+    // this block of code, then this pointer gets invalidated
+    ball = &m_balls[i];
 
-      m_balls[i].m_velocity.x *= -1.0f;
+    ball->update(m_last_frame_time);
+    if (m_player.checkCollision(ball)) {
+      m_player.placeBallAtCollisionPoint(ball);
+      
+      // TODO: implement a system for giving effect to the ball.
+      // Maybe if the ball bounces in the center of the paddle (% off the center)
+      // the ball's y velocity tends to 0, so you can "neutralize" the ball.
+      // And then, if the ball touches the upper or lower part of the paddle
+      // the ball could increment the ball's speed and velocity in y more
+      // drastically
+      ball->m_speed *= 1.05f + m_player.m_y_velocity * m_player.m_y_velocity;
+      ball->m_velocity.x *= -1.0f;
+      ball->m_velocity.y += m_player.m_y_velocity * 10.0f;
     }
   }
 }

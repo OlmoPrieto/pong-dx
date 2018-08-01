@@ -1,6 +1,7 @@
 #include <paddle.h>
 
 #include <game.h>
+#include <input.h>
 
 Paddle::Paddle() {
   uint8_t* texture_data = m_sprite.getTextureData();
@@ -86,5 +87,15 @@ void Paddle::placeBallAtCollisionPoint(Ball* ball) {
 }
 
 void Paddle::update(float dt) {
+  Vec2 pos = Input::getCursorPos();
+  if (pos != 0 && Input::isScreenPressed()) {
+    m_sprite.m_position.y = pos.y;
+  }
 
+  // No point in using X position as it doesn't change
+  m_y_velocity = m_sprite.m_position.y - m_last_position.y;
+  m_y_velocity /= Game::m_render_height;
+  //printf("m_y_velocity: %.2f\n", m_y_velocity);
+
+  m_last_position = m_sprite.m_position;
 }

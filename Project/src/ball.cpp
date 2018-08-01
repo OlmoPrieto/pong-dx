@@ -4,8 +4,8 @@
 
 Ball::Ball() {
   m_speed = 0.5f;
-  // m_velocity.x = (float)RandomNumber(0, 100) * 0.01f;
-  // m_velocity.y = (float)RandomNumber(0, 100) * 0.01f;
+  //m_velocity.x = (float)RandomNumber(0, 100) * 0.01f;
+  //m_velocity.y = (float)RandomNumber(0, 100) * 0.01f;
   m_velocity.x = 1.0f;
   m_velocity.y = 0.0f;
 
@@ -41,16 +41,13 @@ void Ball::update(float dt) {
   // Check bounce with walls
   if (pos.x - scale.x < 0.0f || pos.x + scale.x > Game::m_render_width) {
     m_velocity.x = -m_velocity.x;
-    m_speed *= 1.05f;
   }
   if (pos.y - scale.y < 0.0f || pos.y + scale.y > Game::m_render_height) {
     m_velocity.y = -m_velocity.y;
-    m_speed *= 1.05f;
   }
   
   m_last_position = m_sprite.m_position;
   // Update movement
-  //m_sprite.m_position += m_velocity * m_speed * dt;
   move(m_sprite.m_position, dt);
 
   //m_last_position = m_sprite.m_position;
