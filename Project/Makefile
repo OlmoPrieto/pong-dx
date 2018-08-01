@@ -77,9 +77,9 @@ ifeq ($(config),debug)
 	$(OBJDIR)/dependencies/glew/include/glew.o \
 	$(OBJDIR)/src/ball.o \
 	$(OBJDIR)/src/game.o \
+	$(OBJDIR)/src/input.o \
 	$(OBJDIR)/src/main.o \
 	$(OBJDIR)/src/paddle.o \
-	$(OBJDIR)/src/sockets.o \
 	$(OBJDIR)/src/sprite.o \
 
   define PREBUILDCMDS
@@ -125,9 +125,9 @@ ifeq ($(config),release)
 	$(OBJDIR)/dependencies/glew/include/glew.o \
 	$(OBJDIR)/src/ball.o \
 	$(OBJDIR)/src/game.o \
+	$(OBJDIR)/src/input.o \
 	$(OBJDIR)/src/main.o \
 	$(OBJDIR)/src/paddle.o \
-	$(OBJDIR)/src/sockets.o \
 	$(OBJDIR)/src/sprite.o \
 
   define PREBUILDCMDS
@@ -173,9 +173,9 @@ ifeq ($(config),debug64)
 	$(OBJDIR)/dependencies/glew/include/glew.o \
 	$(OBJDIR)/src/ball.o \
 	$(OBJDIR)/src/game.o \
+	$(OBJDIR)/src/input.o \
 	$(OBJDIR)/src/main.o \
 	$(OBJDIR)/src/paddle.o \
-	$(OBJDIR)/src/sockets.o \
 	$(OBJDIR)/src/sprite.o \
 
   define PREBUILDCMDS
@@ -221,9 +221,9 @@ ifeq ($(config),release64)
 	$(OBJDIR)/dependencies/glew/include/glew.o \
 	$(OBJDIR)/src/ball.o \
 	$(OBJDIR)/src/game.o \
+	$(OBJDIR)/src/input.o \
 	$(OBJDIR)/src/main.o \
 	$(OBJDIR)/src/paddle.o \
-	$(OBJDIR)/src/sockets.o \
 	$(OBJDIR)/src/sprite.o \
 
   define PREBUILDCMDS
@@ -269,9 +269,9 @@ ifeq ($(config),debug32)
 	$(OBJDIR)/dependencies/glew/include/glew.o \
 	$(OBJDIR)/src/ball.o \
 	$(OBJDIR)/src/game.o \
+	$(OBJDIR)/src/input.o \
 	$(OBJDIR)/src/main.o \
 	$(OBJDIR)/src/paddle.o \
-	$(OBJDIR)/src/sockets.o \
 	$(OBJDIR)/src/sprite.o \
 
   define PREBUILDCMDS
@@ -317,9 +317,9 @@ ifeq ($(config),release32)
 	$(OBJDIR)/dependencies/glew/include/glew.o \
 	$(OBJDIR)/src/ball.o \
 	$(OBJDIR)/src/game.o \
+	$(OBJDIR)/src/input.o \
 	$(OBJDIR)/src/main.o \
 	$(OBJDIR)/src/paddle.o \
-	$(OBJDIR)/src/sockets.o \
 	$(OBJDIR)/src/sprite.o \
 
   define PREBUILDCMDS
@@ -498,15 +498,15 @@ $(OBJDIR)/src/game.o: src/game.cpp $(GCH) $(MAKEFILE)
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -c "$<"
 
+$(OBJDIR)/src/input.o: src/input.cpp $(GCH) $(MAKEFILE)
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -c "$<"
+
 $(OBJDIR)/src/main.o: src/main.cpp $(GCH) $(MAKEFILE)
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -c "$<"
 
 $(OBJDIR)/src/paddle.o: src/paddle.cpp $(GCH) $(MAKEFILE)
-	@echo $(notdir $<)
-	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -c "$<"
-
-$(OBJDIR)/src/sockets.o: src/sockets.cpp $(GCH) $(MAKEFILE)
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -c "$<"
 

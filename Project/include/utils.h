@@ -338,4 +338,12 @@ static void CreateCircleInTexture(uint8_t* texture, uint32_t width, uint32_t hei
   }
 }
 
+static int32_t Min(int32_t a, int32_t b) {
+  return a < b ? a : b;
+}
+
+static int32_t Max(int32_t a, int32_t b) {
+  return a > b ? a : b;
+}
+
 #endif // __UTILS_H__
