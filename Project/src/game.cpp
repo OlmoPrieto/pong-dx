@@ -146,6 +146,8 @@ void Game::update(float dt) {
       // And then, if the ball touches the upper or lower part of the paddle
       // the ball could increment the ball's speed and velocity in y more
       // drastically
+      ball->disableCollisions();
+      ball->m_angular_speed = 0.0075f * m_player.m_y_velocity;
       ball->m_speed *= 1.05f + m_player.m_y_velocity * m_player.m_y_velocity;
       ball->m_velocity.x *= -1.0f;
       ball->m_velocity.y += m_player.m_y_velocity * 10.0f;

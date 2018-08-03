@@ -23,40 +23,44 @@ Paddle::~Paddle() {
 }
 
 bool Paddle::checkCollision(Ball* ball) {
-  Vec2 pos = m_sprite.m_position;
-  Vec2 scale = m_sprite.m_scale;
-  Vec2 other_pos = ball->m_sprite.m_position;
-  Vec2 other_scale = ball->m_sprite.m_scale;
+  if (ball->collisionEnabled() == true) {
+    Vec2 pos = m_sprite.m_position;
+    Vec2 scale = m_sprite.m_scale;
+    Vec2 other_pos = ball->m_sprite.m_position;
+    Vec2 other_scale = ball->m_sprite.m_scale;
 
-  // Vec2 pos = m_sprite.getPosition();
-  // Vec2 scale = m_sprite.getScale();
-  // Vec2 other_pos = ball->m_sprite.getPosition();
-  // Vec2 other_scale = ball->m_sprite.getScale();
+    // Vec2 pos = m_sprite.getPosition();
+    // Vec2 scale = m_sprite.getScale();
+    // Vec2 other_pos = ball->m_sprite.getPosition();
+    // Vec2 other_scale = ball->m_sprite.getScale();
 
-  // float d_x = fabs(pos.x - other_pos.x);
-  // float d_y = fabs(pos.y - other_pos.y);
+    // float d_x = fabs(pos.x - other_pos.x);
+    // float d_y = fabs(pos.y - other_pos.y);
 
-  // if (d_x > (other_scale.x + scale.x) || d_y > (other_scale.y + scale.y)) {
-  //     return false;
-  // }
+    // if (d_x > (other_scale.x + scale.x) || d_y > (other_scale.y + scale.y)) {
+    //     return false;
+    // }
 
-  // if (d_x <= other_scale.x || d_y <= other_scale.y) {
-  //     return true;
-  // }
+    // if (d_x <= other_scale.x || d_y <= other_scale.y) {
+    //     return true;
+    // }
 
-  // float corner_d_sq = (d_x - other_scale.x) * (d_x - other_scale.x) +
-  //                     (d_y - other_scale.y) * (d_y - other_scale.y);
+    // float corner_d_sq = (d_x - other_scale.x) * (d_x - other_scale.x) +
+    //                     (d_y - other_scale.y) * (d_y - other_scale.y);
 
-  // if (corner_d_sq <= scale.x * scale.x) {
-  //     return true;
-  // }
+    // if (corner_d_sq <= scale.x * scale.x) {
+    //     return true;
+    // }
 
-  // return false;
+    // return false;
 
-  // https://yal.cc/rectangle-circle-intersection-test/
-  float d_x = other_pos.x - Max(pos.x - scale.x, Min(other_pos.x, pos.x + scale.x));
-  float d_y = other_pos.y - Max(pos.y - scale.y, Min(other_pos.y, pos.y + scale.y));
-  return (d_x * d_x + d_y * d_y) < (other_scale.x * other_scale.x);
+    // https://yal.cc/rectangle-circle-intersection-test/
+    float d_x = other_pos.x - Max(pos.x - scale.x, Min(other_pos.x, pos.x + scale.x));
+    float d_y = other_pos.y - Max(pos.y - scale.y, Min(other_pos.y, pos.y + scale.y));
+    return (d_x * d_x + d_y * d_y) < (other_scale.x * other_scale.x);
+  }
+
+  return false;
 }
 
 void Paddle::placeBallAtCollisionPoint(Ball* ball) {

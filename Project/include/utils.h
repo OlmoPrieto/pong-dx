@@ -77,6 +77,12 @@ struct Vec2 {
     return r;
   }
 
+  Vec2 operator - (const Vec2& other) {
+    Vec2 r(*this);
+    r.x -= other.x; r.y -= other.y;
+    return r;
+  }
+
   Vec2& operator *= (float a) {
     x *= a; y *= a;
     return *this;
@@ -344,6 +350,11 @@ static int32_t Min(int32_t a, int32_t b) {
 
 static int32_t Max(int32_t a, int32_t b) {
   return a > b ? a : b;
+}
+
+static float Lerp(float a, float b, float alpha) {
+  return a + alpha * (b - a);
+  //return (1 - alpha) * a + alpha * b;
 }
 
 #endif // __UTILS_H__
