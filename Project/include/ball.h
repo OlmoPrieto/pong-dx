@@ -18,8 +18,10 @@ public:
   Sprite m_sprite;
   Vec2 m_velocity;
   Vec2 m_last_position;
+  Vec2 m_acceleration;
   float m_speed = 0.0f;
   float m_angular_speed = 0.001f;
+  float m_deceleration_time = 2.0f;
 
 private:
 	float m_reset_collision_dt = 0.0f;

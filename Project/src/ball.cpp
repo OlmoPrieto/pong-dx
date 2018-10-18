@@ -53,46 +53,37 @@ void Ball::update(float dt) {
   }
   
   m_last_position = m_sprite.m_position;
+
   // Update movement
   move(m_sprite.m_position, dt);
-
-  //m_last_position = m_sprite.m_position;
 }
 
 void Ball::move(const Vec2& from, float dt) {
   Vec2 radius = m_sprite.m_position - Vec2((float)Game::m_render_width * 0.5f,
     (float)Game::m_render_height * 0.5f);
 
-  m_velocity.x += -m_angular_speed * radius.y;
-  m_velocity.y +=  m_angular_speed * radius.x;
-
-  m_sprite.m_position = m_velocity * m_speed * dt + from;
-
-  //printf("pos: %.2f  %.2f\n", m_sprite.m_position.x, m_sprite.m_position.y);
-  printf("as: %f\n", m_angular_speed);
-
   static float time = 0.0f;
   time += dt;
-  
-  if (m_angular_speed >= -0.000001f && m_angular_speed <= 0.000001f) {
-    m_angular_speed = 0.0f;
+
+  printf("decc / speed: %.2f\n", m_deceleration_time * m_speed);
+  m_acceleration.x = Lerp(m_acceleration.x, 0.0f, time * 0.001f / (m_deceleration_time * m_speed));
+  m_acceleration.y = Lerp(m_acceleration.y, 0.0f, time * 0.001f / (m_deceleration_time * m_speed));
+  // if (m_acceleration.y >= -0.01f && m_acceleration.y <= 0.01f
+  //   || m_acceleration.x >= -0.01f && m_acceleration.x <= 0.01f) {
+  //   m_acceleration.x = 0.0f;
+  //   m_acceleration.y = 0.0f;
+  //   time = 0.0f;
+  // }
+  if (m_acceleration.x == 0.0f || m_acceleration.y == 0.0f) {
     time = 0.0f;
   }
-  else if (m_angular_speed != 0.0f) {
-    m_angular_speed = Lerp(m_angular_speed, 0.0f, time * 0.001f);
-    //m_angular_speed *= 0.0001f;
-  }
 
-  // if (m_angular_speed != 0.0f) {
-  //   m_angular_speed = Lerp(m_angular_speed, 0.0f, time * 0.001f);
-  //   //m_angular_speed *= 0.0001f;
-  // }
-  // else if (m_angular_speed >= -0.000001f && m_angular_speed <= 0.000001f) {
-  //   m_angular_speed = 0.0f;
-  //   time = 0.0f;
-  //   printf("PINPIN\n");
-  // }
-  
+  //printf("m_acceleration: %.2f\n", m_acceleration.y);
+
+  m_velocity += m_acceleration;
+
+  m_sprite.m_position = m_velocity * m_speed * dt + from;
+  //m_sprite.m_position = from + m_velocity * m_speed * dt;
 }
 
 void Ball::disableCollisions() {

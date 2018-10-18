@@ -354,7 +354,6 @@ static int32_t Max(int32_t a, int32_t b) {
 
 static float Lerp(float a, float b, float alpha) {
   return a + alpha * (b - a);
-  //return (1 - alpha) * a + alpha * b;
 }
 
 #endif // __UTILS_H__

@@ -147,10 +147,13 @@ void Game::update(float dt) {
       // the ball could increment the ball's speed and velocity in y more
       // drastically
       ball->disableCollisions();
-      ball->m_angular_speed = 0.0075f * m_player.m_y_velocity;
       ball->m_speed *= 1.05f + m_player.m_y_velocity * m_player.m_y_velocity;
       ball->m_velocity.x *= -1.0f;
       ball->m_velocity.y += m_player.m_y_velocity * 10.0f;
+      ball->m_acceleration.x = -m_player.m_y_velocity;
+      float height_diff = m_player.m_sprite.m_position.y - ball->m_sprite.m_position.y;
+      printf("height_diff: %.2f\n", height_diff);
+      ball->m_acceleration.y = m_player.m_y_velocity * height_diff * 0.05f;
     }
   }
 }
