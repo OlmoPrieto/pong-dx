@@ -6,6 +6,13 @@ Sprite::Sprite() {
 
   m_color = Color(255, 255, 255, 255);
 
+  // TODO: Need a refactor.
+  // Texture data shouldn't be specified here because
+  // you don't know what kind of texture this sprite will have
+  // and you are allocating data that might be unused.
+  // It's better to do that on setTextureData(byte* data, uint32_t width, uint32_t height)
+  // and handle there if the texture data has been
+  // uploaded to the GPU, or it needs to be updated.
   m_texture_width = 1024;
   m_texture_height = 1024;
   m_texture = (uint8_t*)malloc(m_texture_width * m_texture_height * 4);
