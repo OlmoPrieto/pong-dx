@@ -73,6 +73,7 @@ private:
   std::chrono::high_resolution_clock m_frame_clock;
   std::chrono::high_resolution_clock::time_point m_time1;
   std::chrono::high_resolution_clock::time_point m_time2;
+  float m_target_frame_time = (1.0f / 120.0f) * 1000.0f;
 };
 
 #endif // __GAME_H__

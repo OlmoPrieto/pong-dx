@@ -65,25 +65,19 @@ void Ball::move(const Vec2& from, float dt) {
   static float time = 0.0f;
   time += dt;
 
-  printf("decc / speed: %.2f\n", m_deceleration_time * m_speed);
+  // Factor for deceleration time
+  //printf("decc / speed: %.2f\n", m_deceleration_time * m_speed);
+  
   m_acceleration.x = Lerp(m_acceleration.x, 0.0f, time * 0.001f / (m_deceleration_time * m_speed));
   m_acceleration.y = Lerp(m_acceleration.y, 0.0f, time * 0.001f / (m_deceleration_time * m_speed));
-  // if (m_acceleration.y >= -0.01f && m_acceleration.y <= 0.01f
-  //   || m_acceleration.x >= -0.01f && m_acceleration.x <= 0.01f) {
-  //   m_acceleration.x = 0.0f;
-  //   m_acceleration.y = 0.0f;
-  //   time = 0.0f;
-  // }
   if (m_acceleration.x == 0.0f || m_acceleration.y == 0.0f) {
     time = 0.0f;
   }
 
-  //printf("m_acceleration: %.2f\n", m_acceleration.y);
-
   m_velocity += m_acceleration;
+  //printf("[x, y]: %.2f %.2f\n", m_velocity.x, m_velocity.y);
 
   m_sprite.m_position = m_velocity * m_speed * dt + from;
-  //m_sprite.m_position = from + m_velocity * m_speed * dt;
 }
 
 void Ball::disableCollisions() {

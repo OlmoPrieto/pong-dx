@@ -149,8 +149,11 @@ void Game::update(float dt) {
       ball->disableCollisions();
       ball->m_speed *= 1.05f + m_player.m_y_velocity * m_player.m_y_velocity;
       ball->m_velocity.x *= -1.0f;
-      ball->m_velocity.y += m_player.m_y_velocity * 10.0f;
-      ball->m_acceleration.x = -m_player.m_y_velocity;
+      float direction = 1.0f;
+      if (ball->m_velocity.x < 0.0f) {
+        direction = -1.0f;
+      }
+      ball->m_acceleration.x = direction * (abs(m_player.m_y_velocity) * 1.5f);
       float height_diff = m_player.m_sprite.m_position.y - ball->m_sprite.m_position.y;
       printf("height_diff: %.2f\n", height_diff);
       ball->m_acceleration.y = m_player.m_y_velocity * height_diff * 0.05f;
@@ -174,10 +177,10 @@ void Game::draw() {
   m_last_frame_time = std::chrono::duration_cast<std::chrono::duration<float> >(m_time2 - m_time1).count();
   m_time1 = m_frame_clock.now();
 
-  if (m_last_frame_time < 16.6666f) {
-    std::this_thread::sleep_for(std::chrono::duration<float, std::milli>(8.3333f));
+  if (m_last_frame_time < m_target_frame_time) {
+    std::this_thread::sleep_for(std::chrono::duration<float, std::milli>(m_target_frame_time * 0.5f));
   }
-  while (m_last_frame_time <= 16.6666f) {
+  while (m_last_frame_time <= m_target_frame_time) {
     m_time2 = m_frame_clock.now();
     m_last_frame_time += std::chrono::duration_cast<std::chrono::duration<float> >(m_time2 - m_time1).count();
   }
@@ -230,7 +233,7 @@ void Game::drawSprite(Sprite* sprite) {
 
 Game::Game() {
   m_timer.start();
-  m_last_frame_time = 16.6666f; // fake time for first frame
+  m_last_frame_time = m_target_frame_time; // fake time for first frame
 
   init();
 }
