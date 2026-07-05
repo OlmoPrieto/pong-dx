@@ -1,4 +1,4 @@
-# Testing Project
+# pong-dx
 
 A simple C++ project using GCC and VS Code.
 
@@ -10,11 +10,11 @@ A simple C++ project using GCC and VS Code.
 ## Building
 
 Using VS Code task (Ctrl+Shift+B):
-- Compiles with g++ to generate Testing.exe
+- Compiles with g++ to generate pong-dx.exe
 
 Or from command line:
 ```bash
-g++ src/main.cpp -o Testing.exe -std=c++17 -I include
+g++ src/main.cpp -o pong-dx.exe -std=c++17 -I include
 ```
 
 ## Running
@@ -24,7 +24,7 @@ From VS Code:
 
 Or from command line:
 ```bash
-.\Testing.exe
+.\pong-dx.exe
 ```
 
 ## Project Structure
