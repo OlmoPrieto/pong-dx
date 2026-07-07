@@ -12,6 +12,8 @@ enum class EMsgType : uint8
   CONNECT_REQUEST = 0,  // TODO: have the payload size in the enum (would have to change underlaying type)
   CONNECT_ACCEPT,
   DISCONNECT,
+  START_GAME,
+  PAUSE_GAME,
   GAME_STATE,
   //
   COUNT

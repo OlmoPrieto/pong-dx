@@ -10,6 +10,7 @@
 
 struct _ENetPeer;
 typedef struct _ENetPeer ENetPeer;
+class CNetworkClient;
 
 class CGameClient : public IGame
 {
@@ -38,11 +39,11 @@ public:
   CGameClient& operator =(const CGameClient& _oGame) = delete;
   CGameClient& operator =(CGameClient&& _oGame) = delete;
 
-  void Init();  // Initialize state
+  void Init();  // Initialize state, create window
   void End();   // End game
-  void Begin(ENetPeer* _pServerPeer); // Can start the match
+  void Begin(CNetworkClient* _pNetworkClient); // Can start the match
   void Loop();
-  void ReceiveGameState();
+  void OnGameStateReceived(SNetStream* _pStream);
   void ProcessInput();
   void Update(float _fDt);
   void Draw();
@@ -66,7 +67,7 @@ private:
   std::vector<CClientBall> m_vctBalls;
   CPaddle m_oPlayerPaddle;
   CPaddle m_oEnemyPaddle;
-  CServerHandle m_oGameServer;
+  CNetworkClient* m_pNetworkClient = nullptr;
   uint32 m_uClientId = UINT_MAX;
   bool m_bWantClose = false;
   bool m_bGameStarted = false;

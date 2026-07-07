@@ -14,7 +14,10 @@ public:
   CNetworkServer();
   ~CNetworkServer();
 
+  void Init();  // Creates net host
   void Update();
+  bool SendToClient(SNetStream* _pStream, CClientConnection* _pClient, EMsgPriority _eMsgPriority);
+  bool Receive(SNetStream* _pStream);
 
 private:
   std::vector<CGameServer> m_vctGameServers;

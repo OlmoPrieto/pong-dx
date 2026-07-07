@@ -1,22 +1,29 @@
 #pragma once
 
 #include "game/gameclient.h"
+#include "game/network_protocol.h"
 
 struct _ENetHost;
 typedef struct _ENetHost ENetHost;
-class CClientConnection;
 
-class CNetworkSClient
+class CNetworkClient
 {
 public:
-  CNetworkSClient();
-  ~CNetworkSClient();
+  CNetworkClient(char* _sIp, uint16 _uPort);
+  ~CNetworkClient();
 
+  void Init();
   void Connect();
   void Update();
+  void SetIp(char* _sIp);
+  bool WantClose() const { return m_bWantClose; }
+  bool Send(SNetStream* _pStream, EMsgPriority _eMsgPriority);
 
 private:
   CGameClient m_oGameClient;
   ENetHost* m_pHost = nullptr;
   ENetPeer* m_pServerPeer = nullptr;
+  char m_sIp[3 * 4];
+  uint16 m_uPort = UINT16_MAX;
+  bool m_bWantClose = false;
 };

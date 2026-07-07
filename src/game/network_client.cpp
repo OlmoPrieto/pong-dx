@@ -7,29 +7,47 @@
 
 // ------------------------
 
-CNetworkSClient::CNetworkSClient()
+CNetworkClient::CNetworkClient(char* _sIp, uint16 _uPort)
+  : m_uPort(_uPort)
+{
+  memcpy(m_sIp, _sIp, 3*4);
+}
+
+// ------------------------
+
+CNetworkClient::~CNetworkClient()
 {
 
 }
 
 // ------------------------
 
-CNetworkSClient::~CNetworkSClient()
+void CNetworkClient::Init()
 {
-
+  m_oGameClient.Init();
 }
 
 // ------------------------
 
-void CNetworkSClient::Connect()
+void CNetworkClient::Connect()
 {
+  ENetAddress oAddress;
+  oAddress.host = ENET_HOST_ANY;
+  oAddress.port = m_uPort;
 
+  m_pHost = enet_host_create(nullptr, 1, 2, 0, 0);
+  assert(m_pHost);
+  enet_address_set_host(&oAddress, m_sIp);
+
+  m_pServerPeer = enet_host_connect(m_pHost, &oAddress, 2, 0);
+  assert(m_pServerPeer);
 }
 
 // ------------------------
 
-void CNetworkSClient::Update()
+void CNetworkClient::Update()
 {
+  // ----------- NETWORK ----------- 
   ENetEvent oEvent;
   while (enet_host_service(m_pHost, &oEvent, 0) > 0)
   {
@@ -64,26 +82,31 @@ void CNetworkSClient::Update()
         ReadHeader(&oStream, &oHeader);
         switch (oHeader.m_uMsgType)
         {
-          SNetStream oStream;
-          InitNetStream(&oStream, oEvent.packet->data, oEvent.packet->dataLength);
-          SPacketHeader oHeader;
-          ReadHeader(&oStream, &oHeader);
-          switch (oHeader.m_uMsgType)
+          case EMsgType::CONNECT_ACCEPT:
           {
-            case EMsgType::CONNECT_ACCEPT:
-            {
-              printf("Connection accepted by the server\n");
+            printf("  Connection accepted by the server\n");
 
-              m_oGameClient.Begin(oEvent.peer);
+            m_oGameClient.Begin(this);
 
-              break;
-            }
-            default:
-            {
-              //assert(false);
-              break;
-            }
+            break;
           }
+          case EMsgType::GAME_STATE:
+          {
+            memcpy(oStream.m_pData, oEvent.packet->data, oEvent.packet->dataLength);
+            oStream.m_uSize = oEvent.packet->dataLength;
+            oStream.m_uOffset = 0u;
+            oStream.m_bError = false;
+
+            m_oGameClient.OnGameStateReceived(&oStream);
+
+            break;
+          }
+          default:
+          {
+            //assert(false);
+            break;
+          }
+        }
 
         break;
       }
@@ -100,6 +123,48 @@ void CNetworkSClient::Update()
 
     enet_packet_destroy(oEvent.packet);
   }
+
+  // ----------- LOGIC ----------- 
+  m_oGameClient.Loop();
+  if (m_oGameClient.WantClose())
+  {
+    m_oGameClient.End();
+  }
+  m_bWantClose = m_oGameClient.WantClose();
 }
+
+// ------------------------
+
+void CNetworkClient::SetIp(char* _sIp)
+{
+  memcpy(m_sIp, _sIp, 3 * 4);
+}
+
+// ------------------------
+
+bool CNetworkClient::Send(SNetStream* _pStream, EMsgPriority _eMsgPriority)
+{
+  if (m_pServerPeer)
+  {
+    ENetPacket* pPacket = enet_packet_create(_pStream->m_pData, _pStream->m_uOffset, ENET_PACKET_FLAG_RELIABLE);
+    int32 iReturnValue = enet_peer_send(m_pServerPeer, (int32)(_eMsgPriority), pPacket);
+    if (iReturnValue < 0)
+    {
+      // Only destroy packets manually if send fails
+      enet_packet_destroy(pPacket);
+      return false;
+    }
+
+    enet_host_flush(m_pHost);
+
+    return true;
+  }
+
+  return false;
+}
+
+// ------------------------
+
+
 
 // ------------------------

@@ -8,6 +8,7 @@
 #include "enet/enet.h"
 #include "game/gameclient.h"
 #include "game/network_protocol.h"
+#include "game/network_server.h"
 
 // ------------------------
 
@@ -28,6 +29,30 @@ CGameServer::~CGameServer()
 
 // ------------------------
 
+CGameServer::CGameServer(CGameServer&& _oGame) noexcept
+{
+  m_oGameState = std::move(_oGame.m_oGameState);
+  m_vctBalls = std::move(_oGame.m_vctBalls);
+  m_pNetworkServer = std::move(_oGame.m_pNetworkServer);
+  m_bGameStarted = std::move(_oGame.m_bGameStarted);
+  m_bGameEnded = std::move(_oGame.m_bGameEnded);
+}
+
+// ------------------------
+
+CGameServer& CGameServer::operator=(CGameServer&& _oGame) noexcept
+{
+  m_oGameState = std::move(_oGame.m_oGameState);
+  m_vctBalls = std::move(_oGame.m_vctBalls);
+  m_pNetworkServer = std::move(_oGame.m_pNetworkServer);
+  m_bGameStarted = std::move(_oGame.m_bGameStarted);
+  m_bGameEnded = std::move(_oGame.m_bGameEnded);
+
+  return *this;
+}
+
+// ------------------------
+
 void CGameServer::Init()
 {
   
@@ -35,11 +60,11 @@ void CGameServer::Init()
 
 // ------------------------
 
-void CGameServer::Begin(ENetPeer* _pClient0, ENetPeer* _pClient1)
+void CGameServer::Begin(CNetworkServer* _pNetworkServer, CClientConnection* _pClient0, CClientConnection* _pClient1)
 {
-  m_oClient0.Setup(_pClient0);
-  m_oClient1.Setup(_pClient1);
-
+  m_pNetworkServer = _pNetworkServer;
+  m_pClient0 = _pClient0;
+  m_pClient1 = _pClient1;
   m_bGameStarted = true;
 }
 
@@ -95,11 +120,14 @@ void CGameServer::SendGameState()
   InitNetStream(&oStream, pBuffer, NET_MAX_PACKET_SIZE);
   m_oGameState.Write(&oStream);
 
-  if (m_oClient1.Send(&oStream, EMsgPriority::LOW))
+  if (m_pNetworkServer->SendToClient(&oStream, m_pClient0, EMsgPriority::LOW))
+  {
+    //printf("%llu: Server sent data to client0\n", m_uLogicTick);
+  }
+  if (m_pNetworkServer->SendToClient(&oStream, m_pClient1, EMsgPriority::LOW))
   {
     //printf("%llu: Server sent data to client1\n", m_uLogicTick);
   }
-  m_oClient0.Send(&oStream, EMsgPriority::LOW);
 }
 
 // ------------------------
