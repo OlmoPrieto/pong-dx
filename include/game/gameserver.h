@@ -11,6 +11,8 @@
 class CGameClient;
 struct _ENetPeer;
 typedef struct _ENetPeer ENetPeer;
+class CNetworkServer;
+class CClientConnection;
 
 class CGameServer : public IGame
 {
@@ -18,12 +20,12 @@ public:
   CGameServer();
   ~CGameServer();
   CGameServer(const CGameServer& _oGame) = delete;
-  CGameServer(CGameServer&& _oGame) = delete;
+  CGameServer(CGameServer&& _oGame) noexcept;
   CGameServer& operator =(const CGameServer& _oGame) = delete;
-  CGameServer& operator =(CGameServer&& _oGame) = delete;
+  CGameServer& operator =(CGameServer&& _oGame) noexcept;
 
   void Init();
-  void Begin(ENetPeer* _pClient0, ENetPeer* _pClient1);
+  void Begin(CNetworkServer* _pNetworkServer, CClientConnection* _pClient0, CClientConnection* _pClient1);
   void Loop();
   void Update(float _fDt);
   void SendGameState();
@@ -41,8 +43,9 @@ private:
 
   SGameState m_oGameState;
   std::vector<CServerBall> m_vctBalls;
-  CClientHandle m_oClient0;
-  CClientHandle m_oClient1;
+  CNetworkServer* m_pNetworkServer = nullptr;
+  CClientConnection* m_pClient0 = nullptr;
+  CClientConnection* m_pClient1 = nullptr;
   bool m_bGameStarted = false;
   bool m_bGameEnded = false;
 };

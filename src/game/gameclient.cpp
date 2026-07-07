@@ -5,6 +5,7 @@
 
 #include "raylib/raylib.h"
 #include "game/network_protocol.h"
+#include "game/network_client.h"
 #include "game/gameserver.h"
 
 // ------------------------------------------------
@@ -40,7 +41,10 @@ void CGameClient::CClientBall::Init()
 
 void CGameClient::CClientBall::UnloadResources()
 {
-  UnloadTexture(*m_spTexture.get());
+  if (m_spTexture.get())
+  {
+    UnloadTexture(*m_spTexture.get());
+  }
 }
 
 // ------------------------
@@ -77,6 +81,11 @@ CGameClient::~CGameClient()
   {
     m_vctBalls[i].UnloadResources();
   }
+
+  if (m_bWantClose)
+  {
+    CloseWindow();
+  }
 }
 
 // ------------------------
@@ -103,14 +112,14 @@ void CGameClient::Init()
 void CGameClient::End()
 {
   // Raylib
-  CloseWindow();
+  //CloseWindow();
 }
 
 // ------------------------
 
-void CGameClient::Begin(ENetPeer* _pServerPeer)
+void CGameClient::Begin(CNetworkClient* _pNetworkClient)
 {
-  m_oGameServer.Setup(_pServerPeer);
+  m_pNetworkClient = _pNetworkClient;
 
   m_bGameStarted = true;
 }
@@ -148,55 +157,37 @@ void CGameClient::Loop()
 
 // ------------------------
 
-void CGameClient::ReceiveGameState()
+void CGameClient::OnGameStateReceived(SNetStream* _pStream)
 {
-  byte pBuffer[NET_MAX_PACKET_SIZE];
-  SNetStream oStream;
-  InitNetStream(&oStream, pBuffer, NET_MAX_PACKET_SIZE);
-  if (m_oGameServer.Receive(&oStream))
+  m_oGameState.Read(_pStream);
+
+  if (m_oGameState.m_uNumBalls != m_vctBalls.size())
   {
-    //printf("Received something on client\n");
-    SPacketHeader oHeader;
-    ReadHeader(&oStream, &oHeader);
-
-    if (oHeader.m_uMsgType == EMsgType::GAME_STATE)
-    {
-      //printf("  Received GAME_STATE on client\n");
-
-      m_oGameState.Read(&oStream);
-
-      if (m_oGameState.m_uNumBalls != m_vctBalls.size())
-      {
-        assert(false);
-        // TODO: need to create a new ball (??)
-      }
-
-      for (uint32 i = 0; i < m_vctBalls.size(); ++i)
-      {
-        m_vctBalls[i].m_v2Pos = m_oGameState.m_vctBallsPos[i];
-      }
-
-      for (uint32 i = 0; i < m_vctBalls.size(); ++i)
-      {
-        m_vctBalls[i].m_v2Velocity = m_oGameState.m_vctBallsVel[i];
-      }
-
-      m_oGameState.m_oTimeReceived = std::chrono::high_resolution_clock::now();
-
-      //printf("Ball pos: %.3f,%.3f\n", m_vctBalls[0].m_v2Pos.x, m_vctBalls[0].m_v2Pos.y);
-
-      //printf("GameStateFrame: %llu | PacketFrame: %llu\n", m_uLogicTick, m_oGameState.m_uFrame);
-    }
+    assert(false);
+    // TODO: need to create a new ball (??)
   }
+
+  for (uint32 i = 0; i < m_vctBalls.size(); ++i)
+  {
+    m_vctBalls[i].m_v2Pos = m_oGameState.m_vctBallsPos[i];
+  }
+
+  for (uint32 i = 0; i < m_vctBalls.size(); ++i)
+  {
+    m_vctBalls[i].m_v2Velocity = m_oGameState.m_vctBallsVel[i];
+  }
+
+  m_oGameState.m_oTimeReceived = std::chrono::high_resolution_clock::now();
+
+  //printf("Ball pos: %.3f,%.3f\n", m_vctBalls[0].m_v2Pos.x, m_vctBalls[0].m_v2Pos.y);
+
+  //printf("GameStateFrame: %llu | PacketFrame: %llu\n", m_uLogicTick, m_oGameState.m_uFrame);
 }
 
 // ------------------------
 
 void CGameClient::ProcessInput()
 {
-  // Receive state from server
-  ReceiveGameState();
-
   // Read input for current player
   m_oPlayerPaddle.Update(0.016f);
 
