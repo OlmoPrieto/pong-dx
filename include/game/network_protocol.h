@@ -15,6 +15,7 @@ enum class EMsgType : uint8
   START_GAME,
   PAUSE_GAME,
   GAME_STATE,
+  PLAYER_INPUT,
   //
   COUNT
 };

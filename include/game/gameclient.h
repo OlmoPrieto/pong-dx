@@ -6,32 +6,32 @@
 #include "game/serverhandle.h"
 #include "base/types.h"
 #include "game/ball.h"
-#include "game/paddle.h"
+#include "game/client_paddle.h"
 
 struct _ENetPeer;
 typedef struct _ENetPeer ENetPeer;
 class CNetworkClient;
 
+class CClientBall
+{
+public:
+  CClientBall();
+  ~CClientBall();
+
+  void Init();
+  void UnloadResources();
+  void Draw();
+
+  CVector2D m_v2Pos;
+  CVector2D m_v2Velocity;
+
+private:
+  std::shared_ptr<Texture2D> m_spTexture;
+};
+
 class CGameClient : public IGame
 {
 public:
-  class CClientBall
-  {
-  public:
-    CClientBall();
-    ~CClientBall();
-
-    void Init();
-    void UnloadResources();
-    void Draw();
-
-    CVector2D m_v2Pos;
-    CVector2D m_v2Velocity;
-
-  private:
-    std::shared_ptr<Texture2D> m_spTexture;
-  };
-
   CGameClient(void);
   ~CGameClient();
   CGameClient(const CGameClient& _oGame) = delete;
@@ -45,6 +45,7 @@ public:
   void Loop();
   void OnGameStateReceived(SNetStream* _pStream);
   void ProcessInput();
+  void SendInput();
   void Update(float _fDt);
   void Draw();
   bool WantClose();
@@ -65,8 +66,8 @@ private:
   SGameState m_oGameState;
   SGameState m_oPrevGameState;
   std::vector<CClientBall> m_vctBalls;
-  CPaddle m_oPlayerPaddle;
-  CPaddle m_oEnemyPaddle;
+  CClientPaddle m_oPlayerPaddle;
+  CClientPaddle m_oEnemyPaddle;
   CNetworkClient* m_pNetworkClient = nullptr;
   uint32 m_uClientId = UINT_MAX;
   bool m_bWantClose = false;

@@ -11,21 +11,21 @@
 // ------------------------------------------------
 // ------------------------------------------------
 
-CGameClient::CClientBall::CClientBall()
+CClientBall::CClientBall()
 {
 
 }
 
 // ------------------------
 
-CGameClient::CClientBall::~CClientBall()
+CClientBall::~CClientBall()
 {
   
 }
 
 // ------------------------
 
-void CGameClient::CClientBall::Init()
+void CClientBall::Init()
 {
   assert(!m_spTexture);
 
@@ -39,7 +39,7 @@ void CGameClient::CClientBall::Init()
 
 // ------------------------
 
-void CGameClient::CClientBall::UnloadResources()
+void CClientBall::UnloadResources()
 {
   if (m_spTexture.get())
   {
@@ -49,7 +49,7 @@ void CGameClient::CClientBall::UnloadResources()
 
 // ------------------------
 
-void CGameClient::CClientBall::Draw()
+void CClientBall::Draw()
 {
   DrawTextureV(*m_spTexture, Vector2{ m_v2Pos.x - m_spTexture->width * 0.5f,
     m_v2Pos.y - m_spTexture->height * 0.5f },
@@ -139,6 +139,7 @@ void CGameClient::Loop()
     
     // -------- INPUT --------
     ProcessInput();
+    SendInput();
 
     // -------- UPDATE --------
     Update(GetFrameTime());
@@ -199,6 +200,23 @@ void CGameClient::ProcessInput()
   //    Next step is to receive fake info from the server
   //    which will do de AI update of the paddle.
   m_oEnemyPaddle.Update(0.016f);
+}
+
+// ------------------------
+
+void CGameClient::SendInput()
+{
+  SNetStream oStream;
+  byte pBuffer[NET_MAX_PACKET_SIZE];
+  memset(pBuffer, 0, NET_MAX_PACKET_SIZE);
+  InitNetStream(&oStream, pBuffer, NET_MAX_PACKET_SIZE);
+
+  SPacketHeader oHeader;
+  WriteHeader(&oStream, EMsgType::PLAYER_INPUT);
+
+  
+
+  m_pNetworkClient->Send(&oStream, EMsgPriority::HIGH);
 }
 
 // ------------------------

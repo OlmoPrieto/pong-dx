@@ -59,8 +59,6 @@ void CNetworkServer::Update()
       }
       case ENET_EVENT_TYPE_RECEIVE: // ----------------------------------------------
       {
-        printf("Server received a msg...\n");
-
         SNetStream oStream;
         InitNetStream(&oStream, oEvent.packet->data, oEvent.packet->dataLength);
         SPacketHeader oHeader;
@@ -101,6 +99,10 @@ void CNetworkServer::Update()
               oGameServer.Begin(this, m_vctClients[0], m_vctClients[1]);
             }
 
+            break;
+          }
+          case EMsgType::PLAYER_INPUT: // ------------------------
+          {
             break;
           }
           default:
