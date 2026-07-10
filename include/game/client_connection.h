@@ -14,6 +14,7 @@ public:
   ENetPeer* m_pClient = nullptr;
   CGameServer* m_pGameServer = nullptr;
   uint32 m_uPlayerId = UINT_MAX;
+  bool m_bGameStarted = false;
 
 private:
 };

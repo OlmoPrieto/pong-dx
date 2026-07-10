@@ -41,7 +41,7 @@ public:
 
   void Init();  // Initialize state, create window
   void End();   // End game
-  void Begin(CNetworkClient* _pNetworkClient); // Can start the match
+  void Begin(CNetworkClient* _pNetworkClient, uint8 _uPlayerId); // Can start the match
   void Loop();
   void OnGameStateReceived(SNetStream* _pStream);
   void ProcessInput();
@@ -63,13 +63,15 @@ private:
   void UpdateBalls(float _fDt);
   void UpdateGameState();
 
+  friend class CNetworkClient;
+
   SGameState m_oGameState;
   SGameState m_oPrevGameState;
   std::vector<CClientBall> m_vctBalls;
   CClientPaddle m_oPlayerPaddle;
   CClientPaddle m_oEnemyPaddle;
   CNetworkClient* m_pNetworkClient = nullptr;
-  uint32 m_uClientId = UINT_MAX;
+  uint8 m_uClientId = UINT8_MAX;
   bool m_bWantClose = false;
   bool m_bGameStarted = false;
 };

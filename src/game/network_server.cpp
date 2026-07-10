@@ -50,7 +50,7 @@ void CNetworkServer::Update()
 
         CClientConnection* pClientConnection = new CClientConnection();
         pClientConnection->m_pClient = oEvent.peer;
-        //pClientConnection->m_uPlayerId = m_vctClients.size();
+        //pClientConnection->m_uPlayerId = m_vctClients.size() % 2;
         oEvent.peer->data = pClientConnection;
 
         m_vctClients.push_back(pClientConnection);
@@ -73,8 +73,10 @@ void CNetworkServer::Update()
             byte pBuffer[NET_MAX_PACKET_SIZE];
             memset(pBuffer, 0, NET_MAX_PACKET_SIZE);
             InitNetStream(&oSendStream, pBuffer, NET_MAX_PACKET_SIZE);
-            SPacketHeader oHeader;
             WriteHeader(&oSendStream, EMsgType::CONNECT_ACCEPT);
+
+            WriteUint8(&oSendStream, (m_vctClients.size() - 1) % 2);
+
             ENetPacket* pPacket = enet_packet_create(oSendStream.m_pData, oSendStream.m_uOffset, ENET_PACKET_FLAG_RELIABLE);
             if (enet_peer_send(oEvent.peer, 0, pPacket) < 0)
             {
@@ -82,7 +84,7 @@ void CNetworkServer::Update()
               enet_packet_destroy(pPacket);
             }
 
-            enet_host_flush(m_pHost);
+            //enet_host_flush(m_pHost);
 
             if (m_vctClients.size() == 2)
             {
@@ -91,18 +93,82 @@ void CNetworkServer::Update()
               // Start game
               m_vctGameServers.emplace_back();
               CGameServer& oGameServer = m_vctGameServers.back();
-              m_vctClients[0]->m_pGameServer = &oGameServer;
-              m_vctClients[0]->m_uPlayerId = 0u;
-              m_vctClients[1]->m_pGameServer = &oGameServer;
-              m_vctClients[1]->m_uPlayerId = 1u;
+
+              uint32 uConnectedClients = 0;
+              std::vector<uint32> vctClientsIds = { UINT32_MAX, UINT32_MAX };
+              for (uint32 i = 0; i < m_vctClients.size(); ++i)
+              {
+                if (uConnectedClients == 2)
+                  break;
+
+                if (m_vctClients[i]->m_bGameStarted == false)
+                {
+                  m_vctClients[i]->m_pGameServer = &oGameServer;
+                  m_vctClients[i]->m_uPlayerId = uConnectedClients;
+                  vctClientsIds[uConnectedClients++] = i;
+                }
+              }
             
-              oGameServer.Begin(this, m_vctClients[0], m_vctClients[1]);
+              oGameServer.Begin(this, m_vctClients[vctClientsIds[0]], m_vctClients[vctClientsIds[1]]);
+
+              // Send the signal to start the game
+              memset(pBuffer, 0, NET_MAX_PACKET_SIZE);
+              InitNetStream(&oSendStream, pBuffer, NET_MAX_PACKET_SIZE);
+              WriteHeader(&oSendStream, EMsgType::START_GAME);
+
+              // Send it to all clients
+              // Client0
+              ENetPacket* pPacket = enet_packet_create(oSendStream.m_pData, oSendStream.m_uOffset, ENET_PACKET_FLAG_RELIABLE);
+              if (enet_peer_send(m_vctClients[vctClientsIds[0]]->m_pClient, 0, pPacket) < 0)
+              {
+                // Only destroy packets manually if send fails
+                enet_packet_destroy(pPacket);
+              }
+              // Client1
+              pPacket = enet_packet_create(oSendStream.m_pData, oSendStream.m_uOffset, ENET_PACKET_FLAG_RELIABLE);
+              if (enet_peer_send(m_vctClients[vctClientsIds[1]]->m_pClient, 0, pPacket) < 0)
+              {
+                // Only destroy packets manually if send fails
+                enet_packet_destroy(pPacket);
+              }
             }
+
+            enet_host_flush(m_pHost);
 
             break;
           }
           case EMsgType::PLAYER_INPUT: // ------------------------
           {
+            assert(oStream.m_uOffset == GetPacketHeaderSize());
+            
+            uint8 uClientId = UINT8_MAX;
+            ReadUint8(&oStream, &uClientId);
+            assert(uClientId != UINT8_MAX);
+            
+            // Look for the client connection that sent the message
+            uint32 uClientConnectionIndex = 0;
+            for (; uClientConnectionIndex < m_vctClients.size(); ++uClientConnectionIndex)
+            {
+              if (oEvent.peer->data == m_vctClients[uClientConnectionIndex])
+              {
+                break;
+              }
+            }
+
+            CVector2D v2PlayerPos;
+            ReadFloat32(&oStream, ((&v2PlayerPos.x) + 0));
+            ReadFloat32(&oStream, ((&v2PlayerPos.x) + 1));
+
+            CGameServer* pGameServer = m_vctClients[uClientConnectionIndex]->m_pGameServer;
+            if (uClientId == 0)
+            {
+              pGameServer->m_oPaddle0.m_v2Pos = v2PlayerPos;
+            }
+            else
+            {
+              pGameServer->m_oPaddle1.m_v2Pos = v2PlayerPos;
+            }
+
             break;
           }
           default:

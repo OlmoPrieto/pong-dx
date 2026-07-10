@@ -56,12 +56,12 @@ void CClientBall::Draw()
     WHITE);
 }
 
-// ------------------------------------------------
-// ------------------------------------------------
+// ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
 
 CGameClient::CGameClient(void)
-  : m_oPlayerPaddle(this, { sm_uWindowWidth - 8.0f * 4.0f, sm_uWindowHeight - 32.0f * 4.0f }, false)
-  , m_oEnemyPaddle(this, { 8.0f * 4.0f, 32.0f * 4.0f }, false)
+  : m_oPlayerPaddle(this, { sm_uWindowWidth - 8.0f * 4.0f, sm_uWindowHeight - 32.0f * 4.0f }, true)
+  , m_oEnemyPaddle(this,  { 8.0f * 4.0f, 32.0f * 4.0f }, false)
 {
   for (uint32 i = 0; i < 1; ++i)
   {
@@ -117,9 +117,11 @@ void CGameClient::End()
 
 // ------------------------
 
-void CGameClient::Begin(CNetworkClient* _pNetworkClient)
+void CGameClient::Begin(CNetworkClient* _pNetworkClient, uint8 _uPlayerId)
 {
   m_pNetworkClient = _pNetworkClient;
+  m_uClientId = _uPlayerId;
+  assert(m_uClientId != UINT8_MAX);
 
   m_bGameStarted = true;
 }
@@ -180,6 +182,9 @@ void CGameClient::OnGameStateReceived(SNetStream* _pStream)
 
   m_oGameState.m_oTimeReceived = std::chrono::high_resolution_clock::now();
 
+  m_oPlayerPaddle.m_v2Pos = m_oGameState.m_v2Player0Pos;
+  m_oEnemyPaddle.m_v2Pos  = m_oGameState.m_v2Player1Pos;
+
   //printf("Ball pos: %.3f,%.3f\n", m_vctBalls[0].m_v2Pos.x, m_vctBalls[0].m_v2Pos.y);
 
   //printf("GameStateFrame: %llu | PacketFrame: %llu\n", m_uLogicTick, m_oGameState.m_uFrame);
@@ -214,9 +219,14 @@ void CGameClient::SendInput()
   SPacketHeader oHeader;
   WriteHeader(&oStream, EMsgType::PLAYER_INPUT);
 
-  
+  WriteUint8(&oStream, m_uClientId);
+  WriteFloat32(&oStream, m_oPlayerPaddle.m_v2Pos.x);
+  WriteFloat32(&oStream, m_oPlayerPaddle.m_v2Pos.y);
 
   m_pNetworkClient->Send(&oStream, EMsgPriority::HIGH);
+
+  m_oPlayerPaddle.m_v2Pos.y = 0.0f; // HACK: if you ever see the paddle on height 0, a bug happened
+  m_oEnemyPaddle.m_v2Pos.y = 0.0f; // HACK: if you ever see the paddle on height 0, a bug happened
 }
 
 // ------------------------

@@ -84,10 +84,17 @@ void CNetworkClient::Update()
         {
           case EMsgType::CONNECT_ACCEPT:
           {
-            printf("  Connection accepted by the server\n");
+            ReadUint8(&oStream, &m_oGameClient.m_uClientId);
+            printf("  Connection accepted by the server. Client ID: %u\n", m_oGameClient.m_uClientId);
 
-            m_oGameClient.Begin(this);
+            //m_oGameClient.Begin(this, uPlayerId);
 
+            break;
+          }
+          case EMsgType::START_GAME:
+          {
+            m_oGameClient.Begin(this, m_oGameClient.m_uClientId);
+            printf("  Start of the game in client\n");
             break;
           }
           case EMsgType::GAME_STATE:

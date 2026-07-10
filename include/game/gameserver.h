@@ -6,7 +6,7 @@
 #include "game/clienthandle.h"
 #include "base/types.h"
 #include "game/server_ball.h"
-#include "game/paddle.h"
+#include "game/server_paddle.h"
 
 class CGameClient;
 struct _ENetPeer;
@@ -41,8 +41,12 @@ public:
 private:
   void PrepareGameState();
 
+  friend class CNetworkServer;
+
   SGameState m_oGameState;
   std::vector<CServerBall> m_vctBalls;
+  CServerPaddle m_oPaddle0;
+  CServerPaddle m_oPaddle1;
   CNetworkServer* m_pNetworkServer = nullptr;
   CClientConnection* m_pClient0 = nullptr;
   CClientConnection* m_pClient1 = nullptr;

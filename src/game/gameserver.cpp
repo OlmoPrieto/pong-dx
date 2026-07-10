@@ -15,9 +15,15 @@
 CGameServer::CGameServer()
 {
   m_vctBalls.push_back(CServerBall());
+  //m_oPaddle0.m_v2Pos = CVector2D(sm_uWindowWidth - 8.0f * 4.0f, sm_uWindowHeight - 32.0f * 4.0f);
+  //m_oPaddle1.m_v2Pos = CVector2D(8.0f * 4.0f, 32.0f * 4.0f );
+  m_oPaddle0.m_v2Pos = CVector2D(sm_uWindowWidth - 8.0f * 4.0f, sm_uWindowHeight - 32.0f * 4.0f);
+  m_oPaddle1.m_v2Pos = CVector2D(8.0f * 4.0f, 32.0f * 4.0f);
   m_oGameState.m_uNumBalls = 1u;
   m_oGameState.m_vctBallsPos.push_back(CVector2D::v2ZERO);
   m_oGameState.m_vctBallsVel.push_back(CVector2D::v2ZERO);
+  m_oGameState.m_v2Player0Pos = m_oPaddle0.m_v2Pos;
+  m_oGameState.m_v2Player1Pos = m_oPaddle1.m_v2Pos;
 }
 
 // ------------------------
@@ -107,6 +113,8 @@ void CGameServer::Update(float _fDt)
   for (uint32 i = 0; i < m_vctBalls.size(); ++i)
   {
     m_vctBalls[i].Update(_fDt);
+    m_oPaddle0.CheckCollisions(&m_vctBalls[i]);
+    m_oPaddle1.CheckCollisions(&m_vctBalls[i]);
   }
 }
 
@@ -153,7 +161,8 @@ void CGameServer::PrepareGameState()
 
   m_oGameState.m_uFrame = m_uLogicTick;
 
-  
+  m_oGameState.m_v2Player0Pos = m_oPaddle0.m_v2Pos;
+  m_oGameState.m_v2Player1Pos = m_oPaddle1.m_v2Pos;
 }
 
 // ------------------------
