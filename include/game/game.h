@@ -11,6 +11,12 @@ struct SNetStream;
 
 class IGame
 {
+public:
+  static constexpr uint32 sm_uWindowWidth  = 1260u;
+  static constexpr uint32 sm_uWindowHeight = 580u;
+
+  static inline CVector2D sm_v2RightPlayerPos = { sm_uWindowWidth - 8.0f * 4.0f , sm_uWindowHeight - 32.0f * 4.0f };
+  static inline CVector2D sm_v2LeftPlayerPos  = { 8.0f * 4.0f                   , 32.0f * 4.0f };
 };
 
 struct SGameState

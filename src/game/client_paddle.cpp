@@ -54,7 +54,8 @@ void CClientPaddle::Draw()
   DrawTextureEx(*m_spTexture.get(),
     Vector2{ m_v2Pos.x - m_v2HalfSize.x,
       m_v2Pos.y - m_v2HalfSize.y },
-    0.0f, 1.0f, WHITE);
+    0.0f, 1.0f, Color({ (byte)(m_aColor[0] * 255.0f), 
+      (byte)(m_aColor[1] * 255.0f), (byte)(m_aColor[2] * 255.0f), 255 }));
 }
 
 // ------------------------
@@ -125,6 +126,16 @@ const CClientBall* CClientPaddle::GetClosestBall() const
   }
 
   return pClosestBall;
+}
+
+// ------------------------
+
+void CClientPaddle::SetPlayerControlled(bool _bPlayerControlled)
+{
+  if (_bPlayerControlled)
+    m_pfncUpdate = &CClientPaddle::UpdatePlayer;
+  else
+    m_pfncUpdate = &CClientPaddle::UpdateAI;
 }
 
 // ------------------------

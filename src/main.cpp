@@ -46,6 +46,7 @@ int main(int argc, char** argv)
       oClient.Connect();
     }
   }
+  // TODO: if no argument is provided, assume it's client
 
   if (bIsServer)
   {

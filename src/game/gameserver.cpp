@@ -14,11 +14,14 @@
 
 CGameServer::CGameServer()
 {
+  // Paddle0 (first player) is always located on the left
+  //m_oPaddle0.m_v2Pos = CVector2D(8.0f * 4.0f, 32.0f * 4.0f);
+  m_oPaddle0.m_v2Pos = sm_v2LeftPlayerPos;
+  // Paddle1 (second player) is always located on the right
+  m_oPaddle1.m_v2Pos = sm_v2RightPlayerPos;
+
   m_vctBalls.push_back(CServerBall());
-  //m_oPaddle0.m_v2Pos = CVector2D(sm_uWindowWidth - 8.0f * 4.0f, sm_uWindowHeight - 32.0f * 4.0f);
-  //m_oPaddle1.m_v2Pos = CVector2D(8.0f * 4.0f, 32.0f * 4.0f );
-  m_oPaddle0.m_v2Pos = CVector2D(sm_uWindowWidth - 8.0f * 4.0f, sm_uWindowHeight - 32.0f * 4.0f);
-  m_oPaddle1.m_v2Pos = CVector2D(8.0f * 4.0f, 32.0f * 4.0f);
+
   m_oGameState.m_uNumBalls = 1u;
   m_oGameState.m_vctBallsPos.push_back(CVector2D::v2ZERO);
   m_oGameState.m_vctBallsVel.push_back(CVector2D::v2ZERO);

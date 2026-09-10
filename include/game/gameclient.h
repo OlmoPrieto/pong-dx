@@ -53,8 +53,8 @@ public:
 
   const std::vector<CClientBall>& GetBalls() const { return m_vctBalls; }
 
-  static constexpr uint32 sm_uWindowWidth = 1260u;
-  static constexpr uint32 sm_uWindowHeight = 580u;
+  //static constexpr uint32 sm_uWindowWidth = 1260u;
+  //static constexpr uint32 sm_uWindowHeight = 580u;
 
   uint64 m_uLogicTick = 0u;
   constexpr static float m_fTargetFrameTime = 1.0f / 60.0f;
@@ -74,4 +74,5 @@ private:
   uint8 m_uClientId = UINT8_MAX;
   bool m_bWantClose = false;
   bool m_bGameStarted = false;
+  bool m_bRightHanded = true;
 };

@@ -20,6 +20,8 @@ public:
   bool Receive(SNetStream* _pStream);
 
 private:
+  static inline uint32 sm_uClientsId = 0u;
+
   std::vector<CGameServer> m_vctGameServers;
   std::vector<CClientConnection*> m_vctClients;
   ENetHost* m_pHost = nullptr;

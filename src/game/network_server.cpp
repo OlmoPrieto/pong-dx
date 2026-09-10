@@ -75,7 +75,9 @@ void CNetworkServer::Update()
             InitNetStream(&oSendStream, pBuffer, NET_MAX_PACKET_SIZE);
             WriteHeader(&oSendStream, EMsgType::CONNECT_ACCEPT);
 
-            WriteUint8(&oSendStream, (m_vctClients.size() - 1) % 2);
+            //WriteUint8(&oSendStream, (m_vctClients.size() - 1) % 2);
+            // Clients should have unique identifiers, because if using m_vctClients.size() and somebody disconnects, the number gets invalidated
+            WriteUint8(&oSendStream, sm_uClientsId++);
 
             ENetPacket* pPacket = enet_packet_create(oSendStream.m_pData, oSendStream.m_uOffset, ENET_PACKET_FLAG_RELIABLE);
             if (enet_peer_send(oEvent.peer, 0, pPacket) < 0)
@@ -86,6 +88,7 @@ void CNetworkServer::Update()
 
             //enet_host_flush(m_pHost);
 
+            // TODO: WIP, this only works for the two first clients
             if (m_vctClients.size() == 2)
             {
               printf("2 players connected, starting game\n");
@@ -95,7 +98,7 @@ void CNetworkServer::Update()
               CGameServer& oGameServer = m_vctGameServers.back();
 
               uint32 uConnectedClients = 0;
-              std::vector<uint32> vctClientsIds = { UINT32_MAX, UINT32_MAX };
+              uint32 aClientsIds[2] = { UINT32_MAX, UINT32_MAX };
               for (uint32 i = 0; i < m_vctClients.size(); ++i)
               {
                 if (uConnectedClients == 2)
@@ -105,11 +108,11 @@ void CNetworkServer::Update()
                 {
                   m_vctClients[i]->m_pGameServer = &oGameServer;
                   m_vctClients[i]->m_uPlayerId = uConnectedClients;
-                  vctClientsIds[uConnectedClients++] = i;
+                  aClientsIds[uConnectedClients++] = i;
                 }
               }
             
-              oGameServer.Begin(this, m_vctClients[vctClientsIds[0]], m_vctClients[vctClientsIds[1]]);
+              oGameServer.Begin(this, m_vctClients[aClientsIds[0]], m_vctClients[aClientsIds[1]]);
 
               // Send the signal to start the game
               memset(pBuffer, 0, NET_MAX_PACKET_SIZE);
@@ -119,14 +122,14 @@ void CNetworkServer::Update()
               // Send it to all clients
               // Client0
               ENetPacket* pPacket = enet_packet_create(oSendStream.m_pData, oSendStream.m_uOffset, ENET_PACKET_FLAG_RELIABLE);
-              if (enet_peer_send(m_vctClients[vctClientsIds[0]]->m_pClient, 0, pPacket) < 0)
+              if (enet_peer_send(m_vctClients[aClientsIds[0]]->m_pClient, 0, pPacket) < 0)
               {
                 // Only destroy packets manually if send fails
                 enet_packet_destroy(pPacket);
               }
               // Client1
               pPacket = enet_packet_create(oSendStream.m_pData, oSendStream.m_uOffset, ENET_PACKET_FLAG_RELIABLE);
-              if (enet_peer_send(m_vctClients[vctClientsIds[1]]->m_pClient, 0, pPacket) < 0)
+              if (enet_peer_send(m_vctClients[aClientsIds[1]]->m_pClient, 0, pPacket) < 0)
               {
                 // Only destroy packets manually if send fails
                 enet_packet_destroy(pPacket);
@@ -160,6 +163,8 @@ void CNetworkServer::Update()
             ReadFloat32(&oStream, ((&v2PlayerPos.x) + 1));
 
             CGameServer* pGameServer = m_vctClients[uClientConnectionIndex]->m_pGameServer;
+            // TODO: Maybe this should be encapsulated in a function in CGameServer?
+            // pGameServer->ProcessPlayerInput(uClientId, v2PlayerPos);
             if (uClientId == 0)
             {
               pGameServer->m_oPaddle0.m_v2Pos = v2PlayerPos;
@@ -168,6 +173,7 @@ void CNetworkServer::Update()
             {
               pGameServer->m_oPaddle1.m_v2Pos = v2PlayerPos;
             }
+            // --
 
             break;
           }

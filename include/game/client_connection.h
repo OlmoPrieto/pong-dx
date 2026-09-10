@@ -11,7 +11,7 @@ class CGameServer;
 class CClientConnection
 {
 public:
-  ENetPeer* m_pClient = nullptr;
+  ENetPeer* m_pClient = nullptr; // CNetworkClient
   CGameServer* m_pGameServer = nullptr;
   uint32 m_uPlayerId = UINT_MAX;
   bool m_bGameStarted = false;

@@ -19,8 +19,10 @@ public:
   void Update(float _fDt);
   void Draw();
   const CClientBall* GetClosestBall() const;
+  void SetPlayerControlled(bool _bPlayerControlled);
   
   // ------------------------
+  float     m_aColor[3] = { 1.0f, 1.0f, 1.0f };
   CVector2D m_v2Pos;
   CVector2D m_v2Size;
   CVector2D m_v2HalfSize;

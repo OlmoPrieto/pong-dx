@@ -1,0 +1,3 @@
+// 09/09/26
+- Write down the order in which the variables are written for every message in network_protocol
+- 

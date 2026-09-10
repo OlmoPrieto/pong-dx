@@ -60,8 +60,8 @@ void CClientBall::Draw()
 // ------------------------------------------------------------------------------------------------
 
 CGameClient::CGameClient(void)
-  : m_oPlayerPaddle(this, { sm_uWindowWidth - 8.0f * 4.0f, sm_uWindowHeight - 32.0f * 4.0f }, true)
-  , m_oEnemyPaddle(this,  { 8.0f * 4.0f, 32.0f * 4.0f }, false)
+  : m_oPlayerPaddle(this, sm_v2RightPlayerPos, true)
+  , m_oEnemyPaddle(this,  sm_v2LeftPlayerPos, true)
 {
   for (uint32 i = 0; i < 1; ++i)
   {
@@ -99,11 +99,25 @@ void CGameClient::Init()
 
   // For texture loading, raylib must be initialized
   m_oPlayerPaddle.Init();
+  m_oPlayerPaddle.m_aColor[0] = 0.3f;
+  m_oPlayerPaddle.m_aColor[1] = 0.3f;
+  m_oPlayerPaddle.m_aColor[2] = 1.0f;
+
   m_oEnemyPaddle.Init();
+  m_oEnemyPaddle.m_aColor[0] = 1.0f;
+  m_oEnemyPaddle.m_aColor[1] = 0.3f;
+  m_oEnemyPaddle.m_aColor[2] = 0.3f;
 
   for (uint32 i = 0; i < 1; ++i)
   {
     m_vctBalls[i].Init();
+  }
+
+  if (!m_bRightHanded)
+  {
+    // Put player paddle on the left
+    m_oPlayerPaddle.m_v2Pos = sm_v2LeftPlayerPos;
+    m_oEnemyPaddle.m_v2Pos  = sm_v2RightPlayerPos;
   }
 }
 
@@ -122,6 +136,18 @@ void CGameClient::Begin(CNetworkClient* _pNetworkClient, uint8 _uPlayerId)
   m_pNetworkClient = _pNetworkClient;
   m_uClientId = _uPlayerId;
   assert(m_uClientId != UINT8_MAX);
+
+  // HACK_TEMP
+  if (m_uClientId == 1u)
+  {
+    m_oPlayerPaddle.SetPlayerControlled(false);
+
+    m_bRightHanded = false;
+
+    m_oPlayerPaddle.m_v2Pos = sm_v2LeftPlayerPos;
+    m_oEnemyPaddle.m_v2Pos  = sm_v2RightPlayerPos;
+  }
+  // HACK_TEMP
 
   m_bGameStarted = true;
 }
@@ -182,8 +208,23 @@ void CGameClient::OnGameStateReceived(SNetStream* _pStream)
 
   m_oGameState.m_oTimeReceived = std::chrono::high_resolution_clock::now();
 
-  m_oPlayerPaddle.m_v2Pos = m_oGameState.m_v2Player0Pos;
-  m_oEnemyPaddle.m_v2Pos  = m_oGameState.m_v2Player1Pos;
+  if (m_uClientId == 0u)
+  {
+    m_oPlayerPaddle.m_v2Pos.y = m_oGameState.m_v2Player0Pos.y;
+    m_oEnemyPaddle.m_v2Pos.y  = m_oGameState.m_v2Player1Pos.y;
+  }
+  else if (m_uClientId == 1u)
+  {
+    m_oPlayerPaddle.m_v2Pos.y = m_oGameState.m_v2Player1Pos.y;
+    m_oEnemyPaddle.m_v2Pos.y  = m_oGameState.m_v2Player0Pos.y;
+  }
+
+  /*if (m_bRightHanded)
+  {
+    float fX = m_oPlayerPaddle.m_v2Pos.x;
+    m_oPlayerPaddle.m_v2Pos.x = m_oEnemyPaddle.m_v2Pos.x;
+    m_oEnemyPaddle.m_v2Pos.x = fX;
+  }*/
 
   //printf("Ball pos: %.3f,%.3f\n", m_vctBalls[0].m_v2Pos.x, m_vctBalls[0].m_v2Pos.y);
 
@@ -204,7 +245,9 @@ void CGameClient::ProcessInput()
   //  NOTE: right now is moved by AI, so just update here.
   //    Next step is to receive fake info from the server
   //    which will do de AI update of the paddle.
+  float fY = m_oEnemyPaddle.m_v2Pos.y;
   m_oEnemyPaddle.Update(0.016f);
+  m_oEnemyPaddle.m_v2Pos.y = fY;
 }
 
 // ------------------------
@@ -225,8 +268,8 @@ void CGameClient::SendInput()
 
   m_pNetworkClient->Send(&oStream, EMsgPriority::HIGH);
 
-  m_oPlayerPaddle.m_v2Pos.y = 0.0f; // HACK: if you ever see the paddle on height 0, a bug happened
-  m_oEnemyPaddle.m_v2Pos.y = 0.0f; // HACK: if you ever see the paddle on height 0, a bug happened
+  //m_oPlayerPaddle.m_v2Pos.y = 0.0f; // HACK: if you ever see the paddle on height 0, a bug happened
+  //m_oEnemyPaddle.m_v2Pos.y = 0.0f; // HACK: if you ever see the paddle on height 0, a bug happened
 }
 
 // ------------------------
