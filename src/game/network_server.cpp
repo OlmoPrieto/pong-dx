@@ -98,7 +98,7 @@ void CNetworkServer::Update()
               CGameServer& oGameServer = m_vctGameServers.back();
 
               uint32 uConnectedClients = 0;
-              uint32 aClientsIds[2] = { UINT32_MAX, UINT32_MAX };
+              uint32 auClientsIds[2] = { UINT32_MAX, UINT32_MAX };
               for (uint32 i = 0; i < m_vctClients.size(); ++i)
               {
                 if (uConnectedClients == 2)
@@ -108,11 +108,11 @@ void CNetworkServer::Update()
                 {
                   m_vctClients[i]->m_pGameServer = &oGameServer;
                   m_vctClients[i]->m_uPlayerId = uConnectedClients;
-                  aClientsIds[uConnectedClients++] = i;
+                  auClientsIds[uConnectedClients++] = i;
                 }
               }
             
-              oGameServer.Begin(this, m_vctClients[aClientsIds[0]], m_vctClients[aClientsIds[1]]);
+              oGameServer.Begin(this, m_vctClients[auClientsIds[0]], m_vctClients[auClientsIds[1]]);
 
               // Send the signal to start the game
               memset(pBuffer, 0, NET_MAX_PACKET_SIZE);
@@ -122,14 +122,14 @@ void CNetworkServer::Update()
               // Send it to all clients
               // Client0
               ENetPacket* pPacket = enet_packet_create(oSendStream.m_pData, oSendStream.m_uOffset, ENET_PACKET_FLAG_RELIABLE);
-              if (enet_peer_send(m_vctClients[aClientsIds[0]]->m_pClient, 0, pPacket) < 0)
+              if (enet_peer_send(m_vctClients[auClientsIds[0]]->m_pClient, 0, pPacket) < 0)
               {
                 // Only destroy packets manually if send fails
                 enet_packet_destroy(pPacket);
               }
               // Client1
               pPacket = enet_packet_create(oSendStream.m_pData, oSendStream.m_uOffset, ENET_PACKET_FLAG_RELIABLE);
-              if (enet_peer_send(m_vctClients[aClientsIds[1]]->m_pClient, 0, pPacket) < 0)
+              if (enet_peer_send(m_vctClients[auClientsIds[1]]->m_pClient, 0, pPacket) < 0)
               {
                 // Only destroy packets manually if send fails
                 enet_packet_destroy(pPacket);

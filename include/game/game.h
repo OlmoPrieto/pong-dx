@@ -29,8 +29,7 @@ struct SGameState
 
   std::vector<CVector2D> m_vctBallsPos;
   std::vector<CVector2D> m_vctBallsVel;
-  CVector2D m_v2Player0Pos;
-  CVector2D m_v2Player1Pos;
+  CVector2D m_av2PlayersPos[2] = { CVector2D(), CVector2D() };
   uint64 m_uFrame = UINT64_MAX;
   std::chrono::time_point<std::chrono::high_resolution_clock> m_oTimeReceived;
   uint8 m_uNumBalls = 0u;

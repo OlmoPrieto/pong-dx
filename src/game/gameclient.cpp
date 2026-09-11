@@ -142,12 +142,21 @@ void CGameClient::Begin(CNetworkClient* _pNetworkClient, uint8 _uPlayerId)
   {
     m_oPlayerPaddle.SetPlayerControlled(false);
 
-    m_bRightHanded = false;
+    {
+      m_bRightHanded = false;
 
-    m_oPlayerPaddle.m_v2Pos = sm_v2LeftPlayerPos;
-    m_oEnemyPaddle.m_v2Pos  = sm_v2RightPlayerPos;
+      m_oPlayerPaddle.m_v2Pos = sm_v2LeftPlayerPos;
+      m_oEnemyPaddle.m_v2Pos  = sm_v2RightPlayerPos;
+    }
   }
   // HACK_TEMP
+
+  if (IsWindowReady())
+  {
+    char sBuffer[16] = { '\0' };
+    sprintf(sBuffer, "Player%u", m_uClientId);
+    SetWindowTitle(sBuffer);
+  }
 
   m_bGameStarted = true;
 }
@@ -206,16 +215,8 @@ void CGameClient::OnGameStateReceived(SNetStream* _pStream)
 
   m_oGameState.m_oTimeReceived = std::chrono::high_resolution_clock::now();
 
-  if (m_uClientId == 0u)
-  {
-    m_oPlayerPaddle.m_v2Pos.y = m_oGameState.m_v2Player0Pos.y;
-    m_oEnemyPaddle.m_v2Pos.y  = m_oGameState.m_v2Player1Pos.y;
-  }
-  else if (m_uClientId == 1u)
-  {
-    m_oPlayerPaddle.m_v2Pos.y = m_oGameState.m_v2Player1Pos.y;
-    m_oEnemyPaddle.m_v2Pos.y  = m_oGameState.m_v2Player0Pos.y;
-  }
+  m_oPlayerPaddle.m_v2Pos.y = m_oGameState.m_av2PlayersPos[m_uClientId].y;
+  m_oEnemyPaddle.m_v2Pos.y  = m_oGameState.m_av2PlayersPos[(m_uClientId + 1) & 1].y;
 
   //printf("Ball pos: %.3f,%.3f\n", m_vctBalls[0].m_v2Pos.x, m_vctBalls[0].m_v2Pos.y);
 

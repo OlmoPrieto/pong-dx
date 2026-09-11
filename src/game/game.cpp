@@ -22,11 +22,11 @@ bool SGameState::Write(SNetStream* _pStream)
 
   WriteUint64(_pStream, m_uFrame);
 
-  WriteFloat32(_pStream, m_v2Player0Pos.x);
-  WriteFloat32(_pStream, m_v2Player0Pos.y);
+  WriteFloat32(_pStream, m_av2PlayersPos[0].x);
+  WriteFloat32(_pStream, m_av2PlayersPos[0].y);
 
-  WriteFloat32(_pStream, m_v2Player1Pos.x);
-  WriteFloat32(_pStream, m_v2Player1Pos.y);
+  WriteFloat32(_pStream, m_av2PlayersPos[1].x);
+  WriteFloat32(_pStream, m_av2PlayersPos[1].y);
 
   WriteUint8(_pStream, m_uNumBalls);
   for (uint32 i = 0; i < m_uNumBalls; ++i)
@@ -59,11 +59,11 @@ bool SGameState::Read(SNetStream* _pStream)
   uint64 uCurrentFrame = m_uFrame;
   ReadUint64(_pStream, &m_uFrame);
 
-  ReadFloat32(_pStream, &m_v2Player0Pos.x);
-  ReadFloat32(_pStream, &m_v2Player0Pos.y);
+  ReadFloat32(_pStream, &m_av2PlayersPos[0].x);
+  ReadFloat32(_pStream, &m_av2PlayersPos[0].y);
 
-  ReadFloat32(_pStream, &m_v2Player1Pos.x);
-  ReadFloat32(_pStream, &m_v2Player1Pos.y);
+  ReadFloat32(_pStream, &m_av2PlayersPos[1].x);
+  ReadFloat32(_pStream, &m_av2PlayersPos[1].y);
 
   ReadUint8(_pStream, &m_uNumBalls);
   assert(m_uNumBalls == m_vctBallsPos.size());
