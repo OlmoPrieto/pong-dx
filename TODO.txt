@@ -1,3 +1,7 @@
-// 09/09/26
-- Write down the order in which the variables are written for every message in network_protocol
-- 
+// 11/09/26
+[ ] Implement the X position of the paddles correctly (inverting them depending on the handeness)
+[ ] Implement the ball's movement correctly (related to above point)
+[ ] Delay to start the game
+[ ] Collisions between paddles and balls
+[ ] Menus ??
+[ ] Write down the order in which the variables are written for every message in network_protocol

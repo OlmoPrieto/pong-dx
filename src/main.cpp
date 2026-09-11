@@ -1,15 +1,7 @@
 #include <iostream>
 #include <cassert>
 
-//#include "game/game.h"
-#include "game/gameclient.h"
-#include "game/gameserver.h"
-#include "game/ball.h"
 #include "enet/enet.h"
-#include "game/serverhandle.h"
-#include "game/clienthandle.h"
-#include "base/network_serialization.h"
-#include "game/network_protocol.h"
 #include "game/network_server.h"
 #include "game/network_client.h"
 

@@ -74,14 +74,14 @@ void CBall::Update(float _fDt)
   bool bReapplyPhysics = false;
   // Check with screen boundaries
   //  Sides
-  if (m_v2Pos.x + m_v2HalfSize.x > CGame::sm_uWindowWidth || m_v2Pos.x - m_v2HalfSize.x < 0)
+  if (m_v2Pos.x + m_v2HalfSize.x > IGame::sm_uWindowWidth || m_v2Pos.x - m_v2HalfSize.x < 0)
   {
     m_v2Velocity.x *= -1.0f;
     m_v2Acceleration.y *= -1.0f;
     bReapplyPhysics = true;
   }
   //  Vertical
-  else if (m_v2Pos.y + m_v2HalfSize.y > CGame::sm_uWindowHeight || m_v2Pos.y - m_v2HalfSize.y < 0)
+  else if (m_v2Pos.y + m_v2HalfSize.y > IGame::sm_uWindowHeight || m_v2Pos.y - m_v2HalfSize.y < 0)
   {
     m_v2Velocity.y *= -1.0f;
     m_v2Acceleration.y *= -1.0f;

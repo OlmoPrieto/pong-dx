@@ -139,5 +139,12 @@ void CClientPaddle::SetPlayerControlled(bool _bPlayerControlled)
 }
 
 // ------------------------
+
+bool CClientPaddle::GetPlayerControlled() const
+{
+  return m_pfncUpdate != nullptr && m_pfncUpdate == &CClientPaddle::UpdatePlayer;
+}
+
+// ------------------------
 // ------------------------
 // ------------------------

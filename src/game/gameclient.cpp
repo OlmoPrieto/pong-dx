@@ -60,8 +60,8 @@ void CClientBall::Draw()
 // ------------------------------------------------------------------------------------------------
 
 CGameClient::CGameClient(void)
-  : m_oPlayerPaddle(this, sm_v2RightPlayerPos, true)
-  , m_oEnemyPaddle(this,  sm_v2LeftPlayerPos, true)
+  : m_oPlayerPaddle(this, m_bRightHanded ? sm_v2RightPlayerPos : sm_v2LeftPlayerPos , true)
+  , m_oEnemyPaddle (this, m_bRightHanded ? sm_v2LeftPlayerPos  : sm_v2RightPlayerPos, true)
 {
   for (uint32 i = 0; i < 1; ++i)
   {
@@ -94,7 +94,7 @@ void CGameClient::Init()
 {
   // Window creation
   //SetConfigFlags(FLAG_VSYNC_HINT);
-  InitWindow(CGame::sm_uWindowWidth, CGame::sm_uWindowHeight, "pong-dx");
+  InitWindow(IGame::sm_uWindowWidth, IGame::sm_uWindowHeight, "pong-dx");
   SetTargetFPS(60);
 
   // For texture loading, raylib must be initialized
@@ -163,8 +163,6 @@ void CGameClient::Loop()
 
   if (m_bWantClose == false && m_bGameStarted == true)
   {
-    //printf("Looping on client\n");
-    
     // -------- INPUT --------
     ProcessInput();
     SendInput();
@@ -219,13 +217,6 @@ void CGameClient::OnGameStateReceived(SNetStream* _pStream)
     m_oEnemyPaddle.m_v2Pos.y  = m_oGameState.m_v2Player0Pos.y;
   }
 
-  /*if (m_bRightHanded)
-  {
-    float fX = m_oPlayerPaddle.m_v2Pos.x;
-    m_oPlayerPaddle.m_v2Pos.x = m_oEnemyPaddle.m_v2Pos.x;
-    m_oEnemyPaddle.m_v2Pos.x = fX;
-  }*/
-
   //printf("Ball pos: %.3f,%.3f\n", m_vctBalls[0].m_v2Pos.x, m_vctBalls[0].m_v2Pos.y);
 
   //printf("GameStateFrame: %llu | PacketFrame: %llu\n", m_uLogicTick, m_oGameState.m_uFrame);
@@ -245,9 +236,15 @@ void CGameClient::ProcessInput()
   //  NOTE: right now is moved by AI, so just update here.
   //    Next step is to receive fake info from the server
   //    which will do de AI update of the paddle.
-  float fY = m_oEnemyPaddle.m_v2Pos.y;
-  m_oEnemyPaddle.Update(0.016f);
-  m_oEnemyPaddle.m_v2Pos.y = fY;
+
+  // HACK
+  if (m_oEnemyPaddle.GetPlayerControlled() == false)
+  {
+    float fY = m_oEnemyPaddle.m_v2Pos.y;
+    m_oEnemyPaddle.Update(0.016f);
+    m_oEnemyPaddle.m_v2Pos.y = fY;
+  }
+  // HACK
 }
 
 // ------------------------

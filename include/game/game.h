@@ -35,31 +35,3 @@ struct SGameState
   std::chrono::time_point<std::chrono::high_resolution_clock> m_oTimeReceived;
   uint8 m_uNumBalls = 0u;
 };
-
-class CGame : public IGame
-{
-public:
-  CGame(void);
-  ~CGame();
-  CGame(const CGame& _oGame) = delete;
-  CGame(CGame&& _oGame) = delete;
-  CGame& operator =(const CGame& _oGame) = delete;
-  CGame& operator =(CGame&& _oGame) = delete;
-
-  void ProcessInput();
-  void Update(float _fDt);
-  void Draw();
-
-  const std::vector<CBall>& GetBalls() const { return m_vctBalls; }
-
-  static constexpr uint32 sm_uWindowWidth  = 1260u;
-  static constexpr uint32 sm_uWindowHeight = 580u;
-
-  uint64 m_uLogicTick = 0u;
-  constexpr static float m_fTargetFrameTime = 1.0f / 60.0f;
-
-private:
-  std::vector<CBall> m_vctBalls;
-  CPaddle m_oPaddle0;
-  CPaddle m_oPaddle1;
-};

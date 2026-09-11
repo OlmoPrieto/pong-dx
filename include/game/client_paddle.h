@@ -20,6 +20,7 @@ public:
   void Draw();
   const CClientBall* GetClosestBall() const;
   void SetPlayerControlled(bool _bPlayerControlled);
+  bool GetPlayerControlled() const;
   
   // ------------------------
   float     m_aColor[3] = { 1.0f, 1.0f, 1.0f };

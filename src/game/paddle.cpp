@@ -112,7 +112,7 @@ void CPaddle::CheckCollisions(CBall* _pBall)
     // Horizontal Speed: reverse trajectory of the ball and
     //  add a bit of velocity depending on the friction with the paddle
     float fBallXVelocity = m_v2BallStoredVelocity.x;
-    float fSpeedX = _pBall->m_v2Pos.x > CGame::sm_uWindowWidth * 0.5f ? -fBallXVelocity : fBallXVelocity;
+    float fSpeedX = _pBall->m_v2Pos.x > IGame::sm_uWindowWidth * 0.5f ? -fBallXVelocity : fBallXVelocity;
     fSpeedX *= 1.025f; // Always increase speed a little on each hit
     float fMaxDisplacement = m_v2Size.x * 3.0f;
     float fClampedPaddlePosDiff = Clamp(fPosDiff, -fMaxDisplacement, fMaxDisplacement);
@@ -120,7 +120,7 @@ void CPaddle::CheckCollisions(CBall* _pBall)
     1.25f, 2.0f) * std::copysign(1.0f, m_v2BallStoredVelocity.x);
 
     // Dettatch the ball from the paddle to not collide anymore
-    if (_pBall->m_v2Pos.x > CGame::sm_uWindowWidth * 0.5f)
+    if (_pBall->m_v2Pos.x > IGame::sm_uWindowWidth * 0.5f)
     {
       _pBall->m_v2Pos.x = m_v2Pos.x - m_v2HalfSize.x - _pBall->m_v2HalfSize.x - 1.0f;
     }
@@ -194,7 +194,9 @@ void CPaddle::UpdateAI(float _fDt)
 
 const CBall* CPaddle::GetClosestBall()
 {
-  const std::vector<CBall>& vctBalls = ((CGame*)m_pOwnerGame)->GetBalls();
+  assert(false);
+  //const std::vector<CBall>& vctBalls = ((CGame*)m_pOwnerGame)->GetBalls();
+  const std::vector<CBall>& vctBalls = std::vector<CBall>();
 
   float fClosestX = std::numeric_limits<float>::max();
   const CBall* pClosestBall = nullptr;
