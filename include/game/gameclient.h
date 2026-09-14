@@ -50,6 +50,7 @@ public:
   void Draw();
   bool WantClose();
   bool GetGameStarted() const { return m_bGameStarted; }
+  void SetRightHanded(bool _bState);
 
   const std::vector<CClientBall>& GetBalls() const { return m_vctBalls; }
 
@@ -68,11 +69,12 @@ private:
   SGameState m_oGameState;
   SGameState m_oPrevGameState;
   std::vector<CClientBall> m_vctBalls;
-  CClientPaddle m_oPlayerPaddle;
-  CClientPaddle m_oEnemyPaddle;
-  CNetworkClient* m_pNetworkClient = nullptr;
+  // Ordering looks odd; m_bRightHanded need to be declared before paddles
   uint8 m_uClientId = UINT8_MAX;
   bool m_bWantClose = false;
   bool m_bGameStarted = false;
   bool m_bRightHanded = true;
+  CClientPaddle m_oPlayerPaddle;
+  CClientPaddle m_oEnemyPaddle;
+  CNetworkClient* m_pNetworkClient = nullptr;
 };

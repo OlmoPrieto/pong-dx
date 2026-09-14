@@ -1,7 +1,8 @@
 // 11/09/26
-[ ] Implement the X position of the paddles correctly (inverting them depending on the handeness)
-[ ] Implement the ball's movement correctly (related to above point)
+[x] Implement the ball's movement correctly (related to above point)
 [ ] Delay to start the game
 [ ] Collisions between paddles and balls
 [ ] Menus ??
 [ ] Write down the order in which the variables are written for every message in network_protocol
+[ ] Add tween animations to UI elements. The animation operates on one or two parameters, that can be width, height, position, etc.
+[x] Only invert ball's position if you are player 1 and you are in righthand mode.

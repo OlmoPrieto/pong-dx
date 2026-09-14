@@ -138,17 +138,17 @@ void CGameClient::Begin(CNetworkClient* _pNetworkClient, uint8 _uPlayerId)
   assert(m_uClientId != UINT8_MAX);
 
   // HACK_TEMP
+#if 1
+  /*if (m_uClientId == 0u)
+  {
+    SetRightHanded(false);
+  }*/
   if (m_uClientId == 1u)
   {
     m_oPlayerPaddle.SetPlayerControlled(false);
-
-    {
-      m_bRightHanded = false;
-
-      m_oPlayerPaddle.m_v2Pos = sm_v2LeftPlayerPos;
-      m_oEnemyPaddle.m_v2Pos  = sm_v2RightPlayerPos;
-    }
+    //SetRightHanded(false);
   }
+#endif
   // HACK_TEMP
 
   if (IsWindowReady())
@@ -205,12 +205,17 @@ void CGameClient::OnGameStateReceived(SNetStream* _pStream)
 
   for (uint32 i = 0; i < m_vctBalls.size(); ++i)
   {
-    m_vctBalls[i].m_v2Pos = m_oGameState.m_vctBallsPos[i];
+    m_vctBalls[i].m_v2Pos       = m_oGameState.m_vctBallsPos[i];
+    m_vctBalls[i].m_v2Velocity  = m_oGameState.m_vctBallsVel[i];
   }
 
-  for (uint32 i = 0; i < m_vctBalls.size(); ++i)
+  if (m_bRightHanded == true && m_uClientId == 1u)
   {
-    m_vctBalls[i].m_v2Velocity = m_oGameState.m_vctBallsVel[i];
+    for (uint32 i = 0; i < m_vctBalls.size(); ++i)
+    {
+      m_vctBalls[i].m_v2Pos.x       = IGame::sm_uWindowWidth - m_oGameState.m_vctBallsPos[i].x;
+      m_vctBalls[i].m_v2Velocity.x *= -1.0f;
+    }
   }
 
   m_oGameState.m_oTimeReceived = std::chrono::high_resolution_clock::now();
@@ -265,9 +270,6 @@ void CGameClient::SendInput()
   WriteFloat32(&oStream, m_oPlayerPaddle.m_v2Pos.y);
 
   m_pNetworkClient->Send(&oStream, EMsgPriority::HIGH);
-
-  //m_oPlayerPaddle.m_v2Pos.y = 0.0f; // HACK: if you ever see the paddle on height 0, a bug happened
-  //m_oEnemyPaddle.m_v2Pos.y = 0.0f; // HACK: if you ever see the paddle on height 0, a bug happened
 }
 
 // ------------------------
@@ -300,6 +302,23 @@ void CGameClient::Draw()
 bool CGameClient::WantClose()
 {
   return m_bWantClose;
+}
+
+// ------------------------
+
+void CGameClient::SetRightHanded(bool _bState)
+{
+  m_bRightHanded = _bState;
+  if (m_bRightHanded)
+  {
+    m_oPlayerPaddle.m_v2Pos.x = IGame::sm_v2RightPlayerPos.x;
+    m_oEnemyPaddle.m_v2Pos.x  = IGame::sm_v2LeftPlayerPos.x;
+  }
+  else
+  {
+    m_oPlayerPaddle.m_v2Pos.x = IGame::sm_v2LeftPlayerPos.x;
+    m_oEnemyPaddle.m_v2Pos.x  = IGame::sm_v2RightPlayerPos.x;
+  }
 }
 
 // ------------------------
