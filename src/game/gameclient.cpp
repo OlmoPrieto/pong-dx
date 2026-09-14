@@ -146,7 +146,7 @@ void CGameClient::Begin(CNetworkClient* _pNetworkClient, uint8 _uPlayerId)
   if (m_uClientId == 1u)
   {
     m_oPlayerPaddle.SetPlayerControlled(false);
-    //SetRightHanded(false);
+    SetRightHanded(false);
   }
 #endif
   // HACK_TEMP
@@ -183,9 +183,16 @@ void CGameClient::Loop()
     BeginDrawing();
     ClearBackground(BLACK);
 
-    //DrawText("It works!", 20, 20, 20, WHITE);
+    // Game
+    Draw(); 
 
-    Draw();
+    // UI
+    if (m_bGameBegun == false && IsWindowReady())
+    {
+      char sBuffer[4] = { '\0' };
+      sprintf(sBuffer, "%u", (uint32)std::roundf(m_fCountdownTimer));
+      DrawText(sBuffer, IGame::sm_uWindowWidth / 2u, IGame::sm_uWindowHeight / 2u, 50, WHITE);
+    }
 
     EndDrawing();
   }
@@ -318,6 +325,18 @@ void CGameClient::SetRightHanded(bool _bState)
   {
     m_oPlayerPaddle.m_v2Pos.x = IGame::sm_v2LeftPlayerPos.x;
     m_oEnemyPaddle.m_v2Pos.x  = IGame::sm_v2RightPlayerPos.x;
+  }
+}
+
+// ------------------------
+
+void CGameClient::SetStartGameCurrentTime(float _fTime)
+{
+  m_fCountdownTimer = _fTime;
+
+  if (_fTime <= 0.0f)
+  {
+    m_bGameBegun = true;
   }
 }
 

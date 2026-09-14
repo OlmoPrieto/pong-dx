@@ -51,6 +51,7 @@ public:
   bool WantClose();
   bool GetGameStarted() const { return m_bGameStarted; }
   void SetRightHanded(bool _bState);
+  void SetStartGameCurrentTime(float _fTime);
 
   const std::vector<CClientBall>& GetBalls() const { return m_vctBalls; }
 
@@ -73,8 +74,10 @@ private:
   uint8 m_uClientId = UINT8_MAX;
   bool m_bWantClose = false;
   bool m_bGameStarted = false;
-  bool m_bRightHanded = true;
+  bool m_bGameBegun = false;
+  float m_fCountdownTimer = 0.0f;
   CClientPaddle m_oPlayerPaddle;
   CClientPaddle m_oEnemyPaddle;
   CNetworkClient* m_pNetworkClient = nullptr;
+  bool m_bRightHanded = true;
 };

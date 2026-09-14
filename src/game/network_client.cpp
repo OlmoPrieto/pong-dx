@@ -95,6 +95,7 @@ void CNetworkClient::Update()
           {
             m_oGameClient.Begin(this, m_oGameClient.m_uClientId);
             printf("  Start of the game in client\n");
+
             break;
           }
           case EMsgType::GAME_STATE:
@@ -106,6 +107,14 @@ void CNetworkClient::Update()
 
             m_oGameClient.OnGameStateReceived(&oStream);
 
+            break;
+          }
+          case EMsgType::START_GAME_COUNTDOWN:
+          {
+            float fCountdown = 100.0f;
+            ReadFloat32(&oStream, &fCountdown);
+            m_oGameClient.SetStartGameCurrentTime(fCountdown);
+            
             break;
           }
           default:

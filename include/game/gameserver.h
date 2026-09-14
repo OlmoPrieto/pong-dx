@@ -37,6 +37,7 @@ public:
 
   uint64 m_uLogicTick = 0u;
   constexpr static float m_fTargetFrameTime = 1.0f / 60.0f;
+  constexpr static float m_fCountdownTimer = 3.0f;
 
 private:
   void PrepareGameState();
@@ -50,6 +51,8 @@ private:
   CNetworkServer* m_pNetworkServer = nullptr;
   CClientConnection* m_pClient0 = nullptr;
   CClientConnection* m_pClient1 = nullptr;
+  float m_fCurrentCountdownTimer = m_fCountdownTimer;
   bool m_bGameStarted = false;
+  bool m_bGameBegun = false;
   bool m_bGameEnded = false;
 };

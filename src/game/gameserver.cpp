@@ -96,15 +96,42 @@ void CGameServer::Loop()
     // Send to clients
     SendGameState();
 
-    // Sleep for remaining time
+    ++m_uLogicTick;
+
     const std::chrono::time_point<std::chrono::high_resolution_clock> oFrameEnd = std::chrono::high_resolution_clock::now();
     const std::chrono::duration<float, std::milli> oProcessTime = oFrameEnd - oFrameStart;
+    
+    if (m_bGameBegun == false)
+    {
+      m_fCurrentCountdownTimer -= m_fTargetFrameTime;
+
+#define SEND_TIMER 1
+#if SEND_TIMER
+      SNetStream oStream;
+      byte pBuffer[NET_MAX_PACKET_SIZE];
+      memset(pBuffer, 0, NET_MAX_PACKET_SIZE);
+      InitNetStream(&oStream, pBuffer, NET_MAX_PACKET_SIZE);
+
+      SPacketHeader oHeader;
+      WriteHeader(&oStream, EMsgType::START_GAME_COUNTDOWN);
+      WriteFloat32(&oStream, m_fCurrentCountdownTimer);
+
+      m_pNetworkServer->SendToClient(&oStream, m_pClient0, EMsgPriority::LOW);
+      m_pNetworkServer->SendToClient(&oStream, m_pClient1, EMsgPriority::LOW);
+#endif
+
+      if (m_fCurrentCountdownTimer <= 0.0f)
+      {
+        m_bGameBegun = true;
+        m_fCurrentCountdownTimer = 0.0f;
+      }
+    }
+
+    // Sleep for remaining time
     if (oProcessTime < oTargetFrameTime)
     {
       std::this_thread::sleep_for(oTargetFrameTime - oProcessTime);
     }
-
-    ++m_uLogicTick;
   }
 }
 
@@ -112,11 +139,14 @@ void CGameServer::Loop()
 
 void CGameServer::Update(float _fDt)
 {
-  for (uint32 i = 0; i < m_vctBalls.size(); ++i)
+  if (m_bGameBegun)
   {
-    m_vctBalls[i].Update(_fDt);
-    m_oPaddle0.CheckCollisions(&m_vctBalls[i]);
-    m_oPaddle1.CheckCollisions(&m_vctBalls[i]);
+    for (uint32 i = 0; i < m_vctBalls.size(); ++i)
+    {
+      m_vctBalls[i].Update(_fDt);
+      m_oPaddle0.CheckCollisions(&m_vctBalls[i]);
+      m_oPaddle1.CheckCollisions(&m_vctBalls[i]);
+    }
   }
 }
 
