@@ -1,6 +1,7 @@
 // 11/09/26
-[ ] Delay to start the game
-[ ] Collisions between paddles and balls
+[x] Delay to start the game
+[x] Collisions between paddles and balls
 [ ] Menus ??
 [ ] Write down the order in which the variables are written for every message in network_protocol
 [ ] Add tween animations to UI elements. The animation operates on one or two parameters, that can be width, height, position, etc.
+[ ] When connecting to a game, send the dimensions of the paddle, ball, etc?

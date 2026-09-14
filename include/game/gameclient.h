@@ -72,12 +72,12 @@ private:
   std::vector<CClientBall> m_vctBalls;
   // Ordering looks odd; m_bRightHanded need to be declared before paddles
   uint8 m_uClientId = UINT8_MAX;
-  bool m_bWantClose = false;
   bool m_bGameStarted = false;
+  bool m_bRightHanded = true;
   bool m_bGameBegun = false;
   float m_fCountdownTimer = 0.0f;
   CClientPaddle m_oPlayerPaddle;
   CClientPaddle m_oEnemyPaddle;
   CNetworkClient* m_pNetworkClient = nullptr;
-  bool m_bRightHanded = true;
+  bool m_bWantClose = false;
 };
