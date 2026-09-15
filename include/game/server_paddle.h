@@ -28,6 +28,7 @@ public:
   float     m_fAccTime = 0.0f;
   uint32    m_uMaxContactFrames = 4u;
   uint32    m_uContactFrames = 0u;
+  uint32    m_uId = UINT32_MAX; // HACK temporal, remove
 
 private:
 };

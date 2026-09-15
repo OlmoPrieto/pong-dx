@@ -71,6 +71,8 @@ CGameClient::CGameClient(void)
   m_oGameState.m_uNumBalls = 1;
   m_oGameState.m_vctBallsPos.push_back(CVector2D::v2ZERO);
   m_oGameState.m_vctBallsVel.push_back(CVector2D::v2ZERO);
+
+  m_pfncLoop = &CGameClient::LoopConnecting;
 }
 
 // ------------------------
@@ -159,6 +161,7 @@ void CGameClient::Begin(CNetworkClient* _pNetworkClient, uint8 _uPlayerId)
   }
 
   m_bGameStarted = true;
+  m_pfncLoop = &CGameClient::LoopGame;
 }
 
 // ------------------------
@@ -167,35 +170,12 @@ void CGameClient::Loop()
 {
   m_bWantClose = WindowShouldClose();
 
-  // TODO: to avoid checking against booleans every time (like m_bGameStarted),
-  //  use different scenes, like WaitingRoom, Game, etc.
+  BeginDrawing();
+  ClearBackground(BLACK);
 
-  if (m_bWantClose == false && m_bGameStarted == true)
-  {
-    // -------- INPUT --------
-    ProcessInput();
-    SendInput();
+  (this->*m_pfncLoop)();
 
-    // -------- UPDATE --------
-    Update(GetFrameTime());
-
-    // -------- DRAW --------
-    BeginDrawing();
-    ClearBackground(BLACK);
-
-    // Game
-    Draw(); 
-
-    // UI
-    if (m_bGameBegun == false && IsWindowReady())
-    {
-      char sBuffer[4] = { '\0' };
-      sprintf(sBuffer, "%u", (uint32)std::roundf(m_fCountdownTimer));
-      DrawText(sBuffer, IGame::sm_uWindowWidth / 2u, IGame::sm_uWindowHeight / 2u, 50, WHITE);
-    }
-
-    EndDrawing();
-  }
+  EndDrawing();
 }
 
 // ------------------------
@@ -383,6 +363,57 @@ void CGameClient::UpdateBalls(float _fDt)
 void CGameClient::UpdateGameState()
 {
   m_oPrevGameState = m_oGameState;
+}
+
+// ------------------------
+
+void CGameClient::LoopConnecting()
+{
+  assert(IsWindowReady() == true);
+
+  char sBuffer[16] = { "Connecting" };
+  for (uint32 i = 0; i < (uint32)std::roundf(m_fConnectingTextCount); ++i)
+  {
+    strcat(sBuffer, ".");
+  }
+  m_fConnectingTextCount += m_fTargetFrameTime;
+  m_fConnectingTextCount = std::fmodf(m_fConnectingTextCount, 3.0f + m_fTargetFrameTime);
+  const uint32 uFontSize = GetFontDefault().baseSize;
+  DrawText(sBuffer, 
+    IGame::sm_uWindowWidth / 2u - strlen("Connecting") * uFontSize * 2.5f, 
+    IGame::sm_uWindowHeight / 2u - uFontSize * 4, 
+    uFontSize * 10, 
+    WHITE);
+}
+
+// ------------------------
+
+void CGameClient::LoopGame()
+{
+  // TODO: to avoid checking against booleans every time (like m_bGameStarted),
+  //  use different scenes, like WaitingRoom, Game, etc.
+
+  if (m_bWantClose == false && m_bGameStarted == true)
+  {
+    // -------- INPUT --------
+    ProcessInput();
+    SendInput();
+
+    // -------- UPDATE --------
+    Update(GetFrameTime());
+
+    // -------- DRAW --------
+    // Game
+    Draw();
+
+    // UI
+    if (m_bGameBegun == false)
+    {
+      char sBuffer[4] = { '\0' };
+      sprintf(sBuffer, "%u", (uint32)std::roundf(m_fCountdownTimer));
+      DrawText(sBuffer, IGame::sm_uWindowWidth / 2u, IGame::sm_uWindowHeight / 2u, 50, WHITE);
+    }
+  }
 }
 
 // ------------------------

@@ -64,6 +64,8 @@ public:
 private:
   void UpdateBalls(float _fDt);
   void UpdateGameState();
+  void LoopConnecting();
+  void LoopGame();
 
   friend class CNetworkClient;
 
@@ -79,5 +81,7 @@ private:
   CClientPaddle m_oPlayerPaddle;
   CClientPaddle m_oEnemyPaddle;
   CNetworkClient* m_pNetworkClient = nullptr;
+  void (CGameClient::*m_pfncLoop)(void) = nullptr;
+  float m_fConnectingTextCount = 0.0f;
   bool m_bWantClose = false;
 };

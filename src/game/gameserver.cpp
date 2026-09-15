@@ -16,8 +16,10 @@ CGameServer::CGameServer()
 {
   // Paddle0 (first player) is always located on the right (most of the players are right handed)
   m_oPaddle0.m_v2Pos = sm_v2RightPlayerPos;
+  m_oPaddle0.m_uId = 0u; // HACK
   // Paddle1 (second player) is always located on the left
   m_oPaddle1.m_v2Pos = sm_v2LeftPlayerPos;
+  m_oPaddle1.m_uId = 1u; // HACK
 
   m_vctBalls.push_back(CServerBall());
 

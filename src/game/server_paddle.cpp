@@ -89,13 +89,29 @@ void CServerPaddle::CheckCollisions(CServerBall* _pBall)
   {
     // Horizontal Speed: reverse trajectory of the ball and
     //  add a bit of velocity depending on the friction with the paddle
-    float fBallXVelocity = m_v2BallStoredVelocity.x;
+    const float fBallXVelocity = m_v2BallStoredVelocity.x;
     float fSpeedX = _pBall->m_v2Pos.x > CGameServer::sm_uWindowWidth * 0.5f ? -fBallXVelocity : fBallXVelocity;
     fSpeedX *= 1.025f; // Always increase speed a little on each hit
-    float fMaxDisplacement = m_v2Size.x * 3.0f;
-    float fClampedPaddlePosDiff = Clamp(fPosDiff, -fMaxDisplacement, fMaxDisplacement);
+    const float fMaxDisplacement = m_v2Size.x * 3.0f;
+    const float fClampedPaddlePosDiff = Clamp(fPosDiff, -fMaxDisplacement, fMaxDisplacement);
+
+    // HACK
+#define HACK_0 0
+#if HACK_0
+    if (m_uId == 1)
+    {
+      assert(m_v2Pos.x == IGame::sm_v2LeftPlayerPos.x);
+      printf("fSpeedX: %.3f\n", fSpeedX);
+      printf("Remap: %.3f\n", Remap(fClampedPaddlePosDiff, -fMaxDisplacement, fMaxDisplacement,
+        1.005f, 1.5f) * std::copysign(1.0f, m_v2BallStoredVelocity.x));
+      printf("speed*remap: %.3f\n", fSpeedX * Remap(fClampedPaddlePosDiff, -fMaxDisplacement, fMaxDisplacement,
+        1.005f, 1.5f) * std::copysign(1.0f, m_v2BallStoredVelocity.x));
+    }
+#endif
+    // HACK
+
     _pBall->m_v2Velocity.x = fSpeedX * Remap(fClampedPaddlePosDiff, -fMaxDisplacement, fMaxDisplacement,
-      1.25f, 2.0f) * std::copysign(1.0f, m_v2BallStoredVelocity.x);
+      1.005f, 1.5f) * std::copysign(1.0f, m_v2BallStoredVelocity.x);
 
     // Dettatch the ball from the paddle to not collide anymore
     if (_pBall->m_v2Pos.x > CGameServer::sm_uWindowWidth * 0.5f)

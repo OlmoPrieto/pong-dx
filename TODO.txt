@@ -5,3 +5,4 @@
 [ ] Write down the order in which the variables are written for every message in network_protocol
 [ ] Add tween animations to UI elements. The animation operates on one or two parameters, that can be width, height, position, etc.
 [ ] When connecting to a game, send the dimensions of the paddle, ball, etc?
+[ ] Keep the ball with high speed in the begining and speed it up the more you return the ball. Keep track of the bounces with the paddles. Invent a formula to not accelerate much first and then speed it up.

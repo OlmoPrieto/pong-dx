@@ -22,7 +22,10 @@ CClientPaddle::CClientPaddle(IGame* _pOwnerGame, const CVector2D& _v2Pos, bool _
 
 CClientPaddle::~CClientPaddle()
 {
-
+  if (m_spTexture.get())
+  {
+    UnloadTexture(*m_spTexture.get());
+  }
 }
 
 // ------------------------
