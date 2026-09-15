@@ -7,6 +7,7 @@
 #include "game/network_protocol.h"
 #include "game/network_client.h"
 #include "game/gameserver.h"
+#include "ui/ui.h"
 
 // ------------------------------------------------
 // ------------------------------------------------
@@ -172,6 +173,14 @@ void CGameClient::Loop()
 
   BeginDrawing();
   ClearBackground(BLACK);
+
+  if (CButton("TEST", CVector2D{ 100.0f, 100.0f }))
+  {
+    printf("GUAU\n");
+  }
+
+  static bool bTest = false;
+  CCheckbox oCheckbox("TEST CHECK", &bTest, CVector2D{ 100.0f, 200.0f });
 
   (this->*m_pfncLoop)();
 

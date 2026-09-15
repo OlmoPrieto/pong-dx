@@ -31,3 +31,6 @@ out/
 *.log
 *.tmp
 *.bak
+
+# 
+AGENTS.md
