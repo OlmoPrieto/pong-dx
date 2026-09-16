@@ -117,6 +117,18 @@ void CNetworkClient::Update()
             
             break;
           }
+          case EMsgType::PAUSE_GAME:
+          {
+            m_oGameClient.Pause();
+
+            break;
+          }
+          case EMsgType::PAUSE_END:
+          {
+            m_oGameClient.Resume();
+
+            break;
+          }
           default:
           {
             //assert(false);

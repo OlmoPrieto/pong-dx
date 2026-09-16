@@ -167,20 +167,26 @@ void CGameClient::Begin(CNetworkClient* _pNetworkClient, uint8 _uPlayerId)
 
 // ------------------------
 
+void CGameClient::Pause()
+{
+  m_pfncLoop = &CGameClient::LoopPause;
+}
+
+// ------------------------
+
+void CGameClient::Resume()
+{
+  m_pfncLoop = &CGameClient::LoopGame;
+}
+
+// ------------------------
+
 void CGameClient::Loop()
 {
   m_bWantClose = WindowShouldClose();
 
   BeginDrawing();
   ClearBackground(BLACK);
-
-  if (CButton("TEST", CVector2D{ 100.0f, 100.0f }))
-  {
-    printf("GUAU\n");
-  }
-
-  static bool bTest = false;
-  CCheckbox oCheckbox("TEST CHECK", &bTest, CVector2D{ 100.0f, 200.0f });
 
   (this->*m_pfncLoop)();
 
@@ -247,6 +253,22 @@ void CGameClient::ProcessInput()
     m_oEnemyPaddle.m_v2Pos.y = fY;
   }
   // HACK
+
+  if (IsKeyReleased(KEY_P))
+  {
+    // Pause request
+    SNetStream oStream;
+    byte pBuffer[NET_MAX_PACKET_SIZE];
+    memset(pBuffer, 0, NET_MAX_PACKET_SIZE);
+    InitNetStream(&oStream, pBuffer, NET_MAX_PACKET_SIZE);
+
+    SPacketHeader oHeader;
+    WriteHeader(&oStream, EMsgType::PAUSE_REQUEST);
+
+    WriteUint8(&oStream, m_uClientId);
+
+    m_pNetworkClient->Send(&oStream, EMsgPriority::HIGH);
+  }
 }
 
 // ------------------------
@@ -422,6 +444,39 @@ void CGameClient::LoopGame()
       sprintf(sBuffer, "%u", (uint32)std::roundf(m_fCountdownTimer));
       DrawText(sBuffer, IGame::sm_uWindowWidth / 2u, IGame::sm_uWindowHeight / 2u, 50, WHITE);
     }
+  }
+}
+
+// ------------------------
+
+void CGameClient::LoopPause()
+{
+  Rectangle oBounds;
+  oBounds.width = IGame::sm_uWindowWidth * 0.2f;
+  oBounds.height = IGame::sm_uWindowHeight * 0.7f;
+  oBounds.x = IGame::sm_uWindowWidth * 0.5f - oBounds.width * 0.5f;
+  oBounds.y = IGame::sm_uWindowHeight * 0.5f - oBounds.height * 0.5f;
+  DrawRectangleRounded(oBounds, 0.05f, 8, Color{ 180u, 180u, 180u, 255u });
+
+  const CVector2D v2ButtonSize = CButton::CalculateSize("RESUME");
+  if (CButton("RESUME", 
+        CVector2D{  oBounds.x + oBounds.width * 0.5f - v2ButtonSize.x * 0.5f, 
+                    oBounds.y + oBounds.height * 0.5f - v2ButtonSize.y * 0.5f }
+     )
+  )
+  {
+    // Pause end
+    SNetStream oStream;
+    byte pBuffer[NET_MAX_PACKET_SIZE];
+    memset(pBuffer, 0, NET_MAX_PACKET_SIZE);
+    InitNetStream(&oStream, pBuffer, NET_MAX_PACKET_SIZE);
+
+    SPacketHeader oHeader;
+    WriteHeader(&oStream, EMsgType::PAUSE_END);
+
+    WriteUint8(&oStream, m_uClientId);
+
+    m_pNetworkClient->Send(&oStream, EMsgPriority::HIGH);
   }
 }
 

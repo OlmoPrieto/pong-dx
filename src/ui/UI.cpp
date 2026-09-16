@@ -54,6 +54,23 @@ CButton::CButton(const char* _pText, const CVector2D& _v2Position, const SUIButt
   Draw(_pText, _v2Position, _oConfig);
 }
 
+CVector2D CButton::CalculateSize(const char* _pText)
+{
+  return CalculateSize(_pText, s_oDefaultButtonConfig);
+}
+
+CVector2D CButton::CalculateSize(const char* _pText, const SUIButtonConfig& _oConfig)
+{
+  const char* pText = _pText ? _pText : "";
+  const float fTextWidth = (float)MeasureText(pText, _oConfig.m_iFontSize);
+  const float fTextHeight = (float)_oConfig.m_iFontSize;
+  const float fWidth = fTextWidth + _oConfig.m_v2TextPadding.x * 2.0f;
+  const float fHeight = fTextHeight + _oConfig.m_v2TextPadding.y * 2.0f;
+
+  return CVector2D(fWidth > _oConfig.m_v2Size.x ? fWidth : _oConfig.m_v2Size.x,
+    fHeight > _oConfig.m_v2Size.y ? fHeight : _oConfig.m_v2Size.y);
+}
+
 void CButton::SetDefaultConfig(const SUIButtonConfig& _oConfig)
 {
   s_oDefaultButtonConfig = _oConfig;
@@ -67,7 +84,8 @@ const SUIButtonConfig& CButton::GetDefaultConfig()
 void CButton::Draw(const char* _pText, const CVector2D& _v2Position, const SUIButtonConfig& _oConfig)
 {
   const char* pText = _pText ? _pText : "";
-  const Rectangle oBounds = ToRectangle(_v2Position, _oConfig.m_v2Size);
+  const CVector2D v2Size = CalculateSize(pText, _oConfig);
+  const Rectangle oBounds = ToRectangle(_v2Position, v2Size);
   m_eState = GetElementState(oBounds, _oConfig.m_bEnabled);
   m_bPressed = _oConfig.m_bEnabled && CheckCollisionPointRec(GetMousePosition(), oBounds) &&
     IsMouseButtonReleased(MOUSE_BUTTON_LEFT);

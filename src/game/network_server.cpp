@@ -177,6 +177,91 @@ void CNetworkServer::Update()
 
             break;
           }
+          case EMsgType::PAUSE_REQUEST:
+          {
+            uint8 uClientId = UINT8_MAX;
+            ReadUint8(&oStream, &uClientId);
+            assert(uClientId != UINT8_MAX);
+            // TODO: handle pause requests limit per player
+
+            // Look for the client connection that sent the message
+            uint32 uClientConnectionIndex = 0;
+            for (; uClientConnectionIndex < m_vctClients.size(); ++uClientConnectionIndex)
+            {
+              if (oEvent.peer->data == m_vctClients[uClientConnectionIndex])
+              {
+                break;
+              }
+            }
+            CGameServer* pGameServer = m_vctClients[uClientConnectionIndex]->m_pGameServer;
+            if (pGameServer->SetPause(true, uClientId))
+            {
+              // Create message
+              SNetStream oSendStream;
+              byte pBuffer[NET_MAX_PACKET_SIZE];
+              memset(pBuffer, 0, NET_MAX_PACKET_SIZE);
+              InitNetStream(&oSendStream, pBuffer, NET_MAX_PACKET_SIZE);
+              WriteHeader(&oSendStream, EMsgType::PAUSE_GAME);
+              ENetPacket* pPacket = enet_packet_create(oSendStream.m_pData, oSendStream.m_uOffset, ENET_PACKET_FLAG_RELIABLE);
+              // Client0
+              if (enet_peer_send(pGameServer->m_pClient0->m_pClient, 0, pPacket) < 0)
+              {
+                // Only destroy packets manually if send fails
+                enet_packet_destroy(pPacket);
+              }
+              // Client1
+              pPacket = enet_packet_create(oSendStream.m_pData, oSendStream.m_uOffset, ENET_PACKET_FLAG_RELIABLE);
+              if (enet_peer_send(pGameServer->m_pClient1->m_pClient, 0, pPacket) < 0)
+              {
+                // Only destroy packets manually if send fails
+                enet_packet_destroy(pPacket);
+              }
+            }
+
+            break;
+          }
+          case EMsgType::PAUSE_END:
+          {
+            uint8 uClientId = UINT8_MAX;
+            ReadUint8(&oStream, &uClientId);
+            assert(uClientId != UINT8_MAX);
+
+            // Look for the client connection that sent the message
+            uint32 uClientConnectionIndex = 0;
+            for (; uClientConnectionIndex < m_vctClients.size(); ++uClientConnectionIndex)
+            {
+              if (oEvent.peer->data == m_vctClients[uClientConnectionIndex])
+              {
+                break;
+              }
+            }
+            CGameServer* pGameServer = m_vctClients[uClientConnectionIndex]->m_pGameServer;
+            if (pGameServer->SetPause(false, uClientId))
+            {
+              // Create message
+              SNetStream oSendStream;
+              byte pBuffer[NET_MAX_PACKET_SIZE];
+              memset(pBuffer, 0, NET_MAX_PACKET_SIZE);
+              InitNetStream(&oSendStream, pBuffer, NET_MAX_PACKET_SIZE);
+              WriteHeader(&oSendStream, EMsgType::PAUSE_END);
+              ENetPacket* pPacket = enet_packet_create(oSendStream.m_pData, oSendStream.m_uOffset, ENET_PACKET_FLAG_RELIABLE);
+              // Client0
+              if (enet_peer_send(pGameServer->m_pClient0->m_pClient, 0, pPacket) < 0)
+              {
+                // Only destroy packets manually if send fails
+                enet_packet_destroy(pPacket);
+              }
+              // Client1
+              pPacket = enet_packet_create(oSendStream.m_pData, oSendStream.m_uOffset, ENET_PACKET_FLAG_RELIABLE);
+              if (enet_peer_send(pGameServer->m_pClient1->m_pClient, 0, pPacket) < 0)
+              {
+                // Only destroy packets manually if send fails
+                enet_packet_destroy(pPacket);
+              }
+            }
+
+            break;
+          }
           default:
           {
             assert(false);

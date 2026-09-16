@@ -42,6 +42,8 @@ public:
   void Init();  // Initialize state, create window
   void End();   // End game
   void Begin(CNetworkClient* _pNetworkClient, uint8 _uPlayerId); // Can start the match
+  void Pause();
+  void Resume();
   void Loop();
   void OnGameStateReceived(SNetStream* _pStream);
   void ProcessInput();
@@ -66,6 +68,7 @@ private:
   void UpdateGameState();
   void LoopConnecting();
   void LoopGame();
+  void LoopPause();
 
   friend class CNetworkClient;
 

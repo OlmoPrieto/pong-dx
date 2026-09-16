@@ -87,18 +87,21 @@ void CGameServer::Loop()
   if (m_bGameStarted && !m_bGameEnded)
   {
     std::chrono::time_point<std::chrono::high_resolution_clock> oFrameStart = std::chrono::high_resolution_clock::now();
-
-    // Receive from clients
-    // Update
-    Update(oTargetFrameTime.count() * 0.001f);
+    
+    if (m_bPause == false)
+    {
+      // Receive from clients
+      // Update
+      Update(oTargetFrameTime.count() * 0.001f);
   
-    // Prepare game state
-    PrepareGameState();
+      // Prepare game state
+      PrepareGameState();
 
-    // Send to clients
-    SendGameState();
+      // Send to clients
+      SendGameState();
 
-    ++m_uLogicTick;
+      ++m_uLogicTick;
+    }
 
     const std::chrono::time_point<std::chrono::high_resolution_clock> oFrameEnd = std::chrono::high_resolution_clock::now();
     const std::chrono::duration<float, std::milli> oProcessTime = oFrameEnd - oFrameStart;
@@ -177,6 +180,33 @@ void CGameServer::SendGameState()
 bool CGameServer::GetGameEnded() const
 {
   return m_bGameEnded;
+}
+
+// ------------------------
+
+bool CGameServer::SetPause(bool _bState, uint32 _uClientId)
+{
+  if (m_uClientThatPaused == UINT32_MAX)
+  {
+    m_uClientThatPaused = _uClientId;
+    assert(_bState == true);
+    m_bPause = _bState;
+
+    return true;
+  }
+  else
+  {
+    if (_bState != m_bPause && m_uClientThatPaused == _uClientId)
+    {
+      // Check that the game can be resumed because the right player has requested the resume
+      m_uClientThatPaused = UINT32_MAX;
+      assert(_bState == false);
+      m_bPause = _bState;
+      return true;
+    }
+  }
+
+  return false;
 }
 
 // ------------------------

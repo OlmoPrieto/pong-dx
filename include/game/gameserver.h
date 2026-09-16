@@ -31,6 +31,7 @@ public:
   void SendGameState();
   bool GetGameEnded() const;
   bool GetGameStarted() const { return m_bGameStarted; }
+  bool SetPause(bool _bState, uint32 _uClientId);
 
   //static constexpr uint32 sm_uWindowWidth = 1260u;
   //static constexpr uint32 sm_uWindowHeight = 580u;
@@ -51,8 +52,10 @@ private:
   CNetworkServer* m_pNetworkServer = nullptr;
   CClientConnection* m_pClient0 = nullptr;
   CClientConnection* m_pClient1 = nullptr;
+  uint32 m_uClientThatPaused = UINT32_MAX;
   float m_fCurrentCountdownTimer = m_fCountdownTimer;
   bool m_bGameStarted = false;
   bool m_bGameBegun = false;
   bool m_bGameEnded = false;
+  bool m_bPause = false;
 };

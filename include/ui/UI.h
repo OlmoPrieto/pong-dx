@@ -29,7 +29,9 @@ struct SUIButtonConfig
   SUIStateColors m_oHovered = { { 72, 83, 104, 255 }, { 188, 205, 232, 255 }, WHITE };
   SUIStateColors m_oPressed = { { 35, 42, 55, 255 }, { 108, 120, 143, 255 }, { 220, 220, 220, 255 } };
   SUIStateColors m_oDisabled = { { 42, 45, 52, 255 }, { 74, 78, 88, 255 }, { 130, 133, 141, 255 } };
+  // m_v2Size es el tamaño mínimo. El botón crece si el texto y este relleno lo requieren.
   CVector2D m_v2Size = CVector2D(140.0f, 36.0f);
+  CVector2D m_v2TextPadding = CVector2D(10.0f, 8.0f);
   float m_fBorderWidth = 2.0f;
   float m_fCornerRadius = 0.18f;
   int32 m_iFontSize = 20;
@@ -62,6 +64,9 @@ public:
   bool WasPressed() const { return m_bPressed; }
   EUIElementState GetState() const { return m_eState; }
 
+  // Devuelve el tamaño final, incluido el relleno del texto y el tamaño mínimo configurado.
+  static CVector2D CalculateSize(const char* _pText);
+  static CVector2D CalculateSize(const char* _pText, const SUIButtonConfig& _oConfig);
   static void SetDefaultConfig(const SUIButtonConfig& _oConfig);
   static const SUIButtonConfig& GetDefaultConfig();
 
