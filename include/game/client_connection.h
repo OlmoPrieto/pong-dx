@@ -13,7 +13,7 @@ class CClientConnection
 public:
   ENetPeer* m_pClient = nullptr; // CNetworkClient
   CGameServer* m_pGameServer = nullptr;
-  uint32 m_uPlayerId = UINT_MAX;
+  uint32 m_uGameId = UINT_MAX;
   bool m_bGameStarted = false;
 
 private:

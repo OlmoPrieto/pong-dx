@@ -12,7 +12,8 @@
 
 // ------------------------
 
-CGameServer::CGameServer()
+CGameServer::CGameServer(uint32 _uGameId)
+  : m_uGameId(_uGameId)
 {
   // Paddle0 (first player) is always located on the right (most of the players are right handed)
   m_oPaddle0.m_v2Pos = sm_v2RightPlayerPos;

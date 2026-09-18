@@ -17,7 +17,7 @@ class CClientConnection;
 class CGameServer : public IGame
 {
 public:
-  CGameServer();
+  CGameServer(uint32 _uGameId);
   ~CGameServer();
   CGameServer(const CGameServer& _oGame) = delete;
   CGameServer(CGameServer&& _oGame) noexcept;
@@ -32,6 +32,7 @@ public:
   bool GetGameEnded() const;
   bool GetGameStarted() const { return m_bGameStarted; }
   bool SetPause(bool _bState, uint32 _uClientId);
+  uint32 GetGameId() const { return m_uGameId; }
 
   //static constexpr uint32 sm_uWindowWidth = 1260u;
   //static constexpr uint32 sm_uWindowHeight = 580u;
@@ -52,6 +53,7 @@ private:
   CNetworkServer* m_pNetworkServer = nullptr;
   CClientConnection* m_pClient0 = nullptr;
   CClientConnection* m_pClient1 = nullptr;
+  uint32 m_uGameId = UINT32_MAX;
   uint32 m_uClientThatPaused = UINT32_MAX;
   float m_fCurrentCountdownTimer = m_fCountdownTimer;
   bool m_bGameStarted = false;
