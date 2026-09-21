@@ -146,10 +146,11 @@ void CGameClient::Begin(CNetworkClient* _pNetworkClient, uint8 _uPlayerId)
 
   // HACK_TEMP
 #if 1
-  /*if (m_uClientId == 0u)
+  if (m_uClientId == 0u)
   {
-    SetRightHanded(false);
-  }*/
+    m_oPlayerPaddle.SetPlayerControlled(true);
+    SetRightHanded(true);
+  }
   if (m_uClientId == 1u)
   {
     m_oPlayerPaddle.SetPlayerControlled(false);
@@ -491,6 +492,10 @@ void CGameClient::LoopGame()
 
 void CGameClient::LoopPause()
 {
+  // Draw game to keep track of what's happening while on pause
+  Draw();
+
+  // UI
   Rectangle oBounds;
   oBounds.width = IGame::sm_uWindowWidth * 0.2f;
   oBounds.height = IGame::sm_uWindowHeight * 0.7f;
