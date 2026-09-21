@@ -95,7 +95,7 @@ void CNetworkClient::Update()
             ReadUint8(&oStream, &m_oGameClient.m_uClientId);
 
             m_oGameClient.Begin(this, m_oGameClient.m_uClientId);
-            printf("  Start of the game in client\n");
+            printf("  Start of the game in client %u\n", m_oGameClient.m_uClientId);
 
             break;
           }
@@ -130,6 +130,12 @@ void CNetworkClient::Update()
 
             break;
           }
+          case EMsgType::GAME_ENDED:
+          {
+            m_oGameClient.End();
+            
+            break;
+          }
           default:
           {
             //assert(false);
@@ -155,10 +161,10 @@ void CNetworkClient::Update()
 
   // ----------- LOGIC ----------- 
   m_oGameClient.Loop();
-  if (m_oGameClient.WantClose())
+  /*if (m_oGameClient.WantClose())
   {
     m_oGameClient.End();
-  }
+  }*/
   m_bWantClose = m_oGameClient.WantClose();
 }
 

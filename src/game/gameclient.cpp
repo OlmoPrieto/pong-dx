@@ -128,8 +128,12 @@ void CGameClient::Init()
 
 void CGameClient::End()
 {
-  // Raylib
-  //CloseWindow();
+  m_uClientId = UINT8_MAX;
+  m_bGameStarted = false;
+  m_bGameBegun = false;
+  m_oPlayerPaddle.SetPlayerControlled(true);
+  m_oEnemyPaddle.SetPlayerControlled(true);
+  m_pfncLoop = &CGameClient::LoopMainMenu;
 }
 
 // ------------------------
@@ -398,6 +402,42 @@ void CGameClient::UpdateGameState()
 
 // ------------------------
 
+void CGameClient::LoopMainMenu()
+{
+  Rectangle oBounds;
+  oBounds.width = IGame::sm_uWindowWidth * 0.2f;
+  oBounds.height = IGame::sm_uWindowHeight * 0.7f;
+  oBounds.x = IGame::sm_uWindowWidth * 0.5f - oBounds.width * 0.5f;
+  oBounds.y = IGame::sm_uWindowHeight * 0.5f - oBounds.height * 0.5f;
+  DrawRectangleRounded(oBounds, 0.05f, 8, Color{ 180u, 180u, 180u, 255u });
+
+  CVector2D v2ButtonSize = CButton::CalculateSize("CONNECT");
+  const CVector2D v2ButtonPos{ oBounds.x + oBounds.width * 0.5f,
+    oBounds.y + oBounds.height * 0.5f };
+
+  if (CButton("CONNECT",
+        CVector2D{  v2ButtonPos.x - v2ButtonSize.x * 0.5f,
+                    v2ButtonPos.y - v2ButtonSize.y * 0.5f }
+    )
+  )
+  {
+    // Send a request to connect to a game
+    SNetStream oStream;
+    byte pBuffer[NET_MAX_PACKET_SIZE];
+    memset(pBuffer, 0, NET_MAX_PACKET_SIZE);
+    InitNetStream(&oStream, pBuffer, NET_MAX_PACKET_SIZE);
+
+    SPacketHeader oHeader;
+    WriteHeader(&oStream, EMsgType::CONNECT_REQUEST);
+
+    m_pNetworkClient->Send(&oStream, EMsgPriority::HIGH);
+
+    m_pfncLoop = &CGameClient::LoopConnecting;
+  }
+}
+
+// ------------------------
+
 void CGameClient::LoopConnecting()
 {
   assert(IsWindowReady() == true);
@@ -458,11 +498,14 @@ void CGameClient::LoopPause()
   oBounds.y = IGame::sm_uWindowHeight * 0.5f - oBounds.height * 0.5f;
   DrawRectangleRounded(oBounds, 0.05f, 8, Color{ 180u, 180u, 180u, 255u });
 
-  const CVector2D v2ButtonSize = CButton::CalculateSize("RESUME");
+  CVector2D v2ButtonSize = CButton::CalculateSize("RESUME");
+  const CVector2D v2ButtonPos{oBounds.x + oBounds.width * 0.5f,
+    oBounds.y + oBounds.height * 0.5f};
+
   if (CButton("RESUME", 
-        CVector2D{  oBounds.x + oBounds.width * 0.5f - v2ButtonSize.x * 0.5f, 
-                    oBounds.y + oBounds.height * 0.5f - v2ButtonSize.y * 0.5f }
-     )
+        CVector2D{ v2ButtonPos.x - v2ButtonSize.x * 0.5f, 
+                   v2ButtonPos.y - v2ButtonSize.y * 0.5f }
+    )
   )
   {
     // Pause end
@@ -477,6 +520,34 @@ void CGameClient::LoopPause()
     WriteUint8(&oStream, m_uClientId);
 
     m_pNetworkClient->Send(&oStream, EMsgPriority::HIGH);
+  }
+
+  if (CCheckbox("Right handed", &m_bRightHanded,
+    CVector2D(v2ButtonPos.x - v2ButtonSize.x * 0.5f, v2ButtonPos.y * 1.1f)))
+  {
+    
+  }
+
+  v2ButtonSize = CButton::CalculateSize("QUIT");
+  if (CButton("QUIT",
+        CVector2D{  v2ButtonPos.x - v2ButtonSize.x * 0.5f,
+                    (oBounds.y + oBounds.height) - v2ButtonSize.y * 2.0f }
+    )
+  )
+  {
+    SNetStream oStream;
+    byte pBuffer[NET_MAX_PACKET_SIZE];
+    memset(pBuffer, 0, NET_MAX_PACKET_SIZE);
+    InitNetStream(&oStream, pBuffer, NET_MAX_PACKET_SIZE);
+
+    SPacketHeader oHeader;
+    WriteHeader(&oStream, EMsgType::END_REQUEST);
+
+    WriteUint8(&oStream, m_uClientId);
+
+    m_pNetworkClient->Send(&oStream, EMsgPriority::HIGH);
+
+    End();
   }
 }
 

@@ -5,6 +5,14 @@
 
 // ------------------------
 
+void CClientConnection::Clear()
+{
+  m_pClient = nullptr;
+  m_pGameServer = nullptr;
+  m_uGameId = UINT32_MAX;
+  m_bGameStarted = false;
+}
+
 // ------------------------
 // ------------------------
 // ------------------------

@@ -87,8 +87,9 @@ void CNetworkServer::Update()
 
             //enet_host_flush(m_pHost);
 
-            // TODO: WIP, this only works for the two first clients
-            if (m_vctClients.size() == 2)
+            m_vctClientsQueue.push_back(static_cast<CClientConnection*>(oEvent.peer->data));
+
+            if (m_vctClientsQueue.size() >= 2)
             {
               printf("2 players connected, starting game\n");
 
@@ -99,9 +100,8 @@ void CNetworkServer::Update()
               CGameServer& oGameServer = m_vctGameServers.back();
               
 
-              // This will pair the first two players looking for a game.
               // TODO: implement a matching system (?).
-              uint32 uConnectedClients = 0;
+              /*uint32 uConnectedClients = 0;
               uint32 auClientsIds[2] = { UINT32_MAX, UINT32_MAX };
               for (uint32 i = 0; i < m_vctClients.size(); ++i)
               {
@@ -113,39 +113,51 @@ void CNetworkServer::Update()
                   m_vctClients[i]->m_pGameServer = &oGameServer;
                   auClientsIds[uConnectedClients++] = i;
                 }
-              }
+              }*/
+              CClientConnection* pClient0 = m_vctClientsQueue.front();
+              pClient0->m_pGameServer = &oGameServer;
+              m_vctClientsQueue.pop_front();
+              CClientConnection* pClient1 = m_vctClientsQueue.front();
+              pClient1->m_pGameServer = &oGameServer;
+              m_vctClientsQueue.pop_front();
+              assert(pClient0->m_bGameStarted == false && pClient1->m_bGameStarted == false);
             
-              oGameServer.Begin(this, m_vctClients[auClientsIds[0]], m_vctClients[auClientsIds[1]]);
+              oGameServer.Begin(this, pClient0, pClient1);
 
               // Send the signal to start the game
               memset(pBuffer, 0, NET_MAX_PACKET_SIZE);
               InitNetStream(&oSendStream, pBuffer, NET_MAX_PACKET_SIZE);
               WriteHeader(&oSendStream, EMsgType::START_GAME);
 
-              WriteUint8(&oSendStream, 0u);
-
               // Send it to all clients
               // Client0
+              // Client id
+              WriteUint8(&oSendStream, 0u);
               ENetPacket* pPacket = enet_packet_create(oSendStream.m_pData, oSendStream.m_uOffset, ENET_PACKET_FLAG_RELIABLE);
-              if (enet_peer_send(m_vctClients[auClientsIds[0]]->m_pClient, 0, pPacket) < 0)
+              if (enet_peer_send(pClient0->m_pClient, 0, pPacket) < 0)
               {
                 // Only destroy packets manually if send fails
                 enet_packet_destroy(pPacket);
               }
-              m_vctClients[auClientsIds[0]]->m_uGameId = oGameServer.GetGameId();
+              pClient0->m_uGameId = oGameServer.GetGameId();
+              // --------
               // Client1
               memset(pBuffer, 0, NET_MAX_PACKET_SIZE);
               InitNetStream(&oSendStream, pBuffer, NET_MAX_PACKET_SIZE);
               WriteHeader(&oSendStream, EMsgType::START_GAME);
 
+              // Client id
               WriteUint8(&oSendStream, 1u);
               pPacket = enet_packet_create(oSendStream.m_pData, oSendStream.m_uOffset, ENET_PACKET_FLAG_RELIABLE);
-              if (enet_peer_send(m_vctClients[auClientsIds[1]]->m_pClient, 0, pPacket) < 0)
+              if (enet_peer_send(pClient1->m_pClient, 0, pPacket) < 0)
               {
                 // Only destroy packets manually if send fails
                 enet_packet_destroy(pPacket);
               }
-              m_vctClients[auClientsIds[1]]->m_uGameId = oGameServer.GetGameId();
+              pClient1->m_uGameId = oGameServer.GetGameId();
+
+
+              printf("  Starting game %u\n", oGameServer.GetGameId());
             }
 
             enet_host_flush(m_pHost);
@@ -289,6 +301,65 @@ void CNetworkServer::Update()
               {
                 // Only destroy packets manually if send fails
                 enet_packet_destroy(pPacket);
+              }
+            }
+
+            break;
+          }
+          case EMsgType::END_REQUEST:
+          {
+            uint8 uClientId = UINT8_MAX;
+            ReadUint8(&oStream, &uClientId);
+            assert(uClientId != UINT8_MAX);
+
+            assert(oEvent.peer->data != nullptr);
+            CClientConnection* pClientConnection = static_cast<CClientConnection*>(oEvent.peer->data);
+
+            CGameServer* pGameServer = pClientConnection->m_pGameServer;
+
+            printf("Ending game %u\n", pGameServer->GetGameId());
+
+            SNetStream oSendStream;
+            byte pBuffer[NET_MAX_PACKET_SIZE];
+            memset(pBuffer, 0, NET_MAX_PACKET_SIZE);
+            InitNetStream(&oSendStream, pBuffer, NET_MAX_PACKET_SIZE);
+            WriteHeader(&oSendStream, EMsgType::GAME_ENDED);
+            if (uClientId == 0u)
+            {
+              ENetPacket* pPacket = enet_packet_create(oSendStream.m_pData, oSendStream.m_uOffset, ENET_PACKET_FLAG_RELIABLE);
+              // Client0
+              if (enet_peer_send(pGameServer->m_pClient1->m_pClient, 0, pPacket) < 0)
+              {
+                // Only destroy packets manually if send fails
+                enet_packet_destroy(pPacket);
+              }
+            }
+            else
+            {
+              ENetPacket* pPacket = enet_packet_create(oSendStream.m_pData, oSendStream.m_uOffset, ENET_PACKET_FLAG_RELIABLE);
+              // Client0
+              if (enet_peer_send(pGameServer->m_pClient0->m_pClient, 0, pPacket) < 0)
+              {
+                // Only destroy packets manually if send fails
+                enet_packet_destroy(pPacket);
+              }
+            }
+
+            // Destroy game server
+            for (uint32 i = 0; i < m_vctGameServers.size(); ++i)
+            {
+              if (pGameServer == &m_vctGameServers[i])
+              {
+                pGameServer->m_pClient0->m_pGameServer = nullptr;
+                pGameServer->m_pClient0->m_uGameId = UINT32_MAX;
+                pGameServer->m_pClient0->m_bGameStarted = false;
+                pGameServer->m_pClient1->m_pGameServer = nullptr;
+                pGameServer->m_pClient1->m_uGameId = UINT32_MAX;
+                pGameServer->m_pClient1->m_bGameStarted = false;
+
+                m_vctGameServers.erase(m_vctGameServers.begin() + i);
+
+                break;
               }
             }
 

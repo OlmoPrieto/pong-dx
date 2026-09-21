@@ -16,5 +16,7 @@ public:
   uint32 m_uGameId = UINT_MAX;
   bool m_bGameStarted = false;
 
+  void Clear();
+
 private:
 };

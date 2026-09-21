@@ -66,6 +66,7 @@ public:
 private:
   void UpdateBalls(float _fDt);
   void UpdateGameState();
+  void LoopMainMenu();
   void LoopConnecting();
   void LoopGame();
   void LoopPause();

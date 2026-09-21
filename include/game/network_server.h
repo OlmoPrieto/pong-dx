@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <deque>
 
 #include "game/gameserver.h"
 
@@ -24,5 +25,6 @@ private:
 
   std::vector<CGameServer> m_vctGameServers;
   std::vector<CClientConnection*> m_vctClients;
+  std::deque<CClientConnection*> m_vctClientsQueue;
   ENetHost* m_pHost = nullptr;
 };
