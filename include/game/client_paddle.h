@@ -15,7 +15,7 @@ public:
   CClientPaddle(IGame* _pOwnerGame, const CVector2D& _v2Pos, bool _bPlayerControlled);
   ~CClientPaddle();
 
-  void Init();
+  void Init(bool _bLoadTextures = true);
   void Update(float _fDt);
   void Draw();
   const CClientBall* GetClosestBall() const;

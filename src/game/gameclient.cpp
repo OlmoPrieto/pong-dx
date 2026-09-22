@@ -26,16 +26,19 @@ CClientBall::~CClientBall()
 
 // ------------------------
 
-void CClientBall::Init()
+void CClientBall::Init(bool _bLoadTextures /*= true*/)
 {
   assert(!m_spTexture);
 
-  // Image img = LoadImage("assets/ball_basic.png");
-  // ImageFormat(&img, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8);
-  // Texture2D ballTex = LoadTextureFromImage(img);
-  // m_spTexture = std::make_shared<Texture2D>(ballTex);
-  m_spTexture = std::make_shared<Texture2D>(LoadTexture("assets/ball_basic.png"));
-  printf("Client ball creation w:%u h:%d\n", m_spTexture->width, m_spTexture->height);
+  if (_bLoadTextures && !m_spTexture)
+  {
+    // Image img = LoadImage("assets/ball_basic.png");
+    // ImageFormat(&img, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8);
+    // Texture2D ballTex = LoadTextureFromImage(img);
+    // m_spTexture = std::make_shared<Texture2D>(ballTex);
+    m_spTexture = std::make_shared<Texture2D>(LoadTexture("assets/ball_basic.png"));
+    printf("Client ball creation w:%u h:%d\n", m_spTexture->width, m_spTexture->height);
+  }
 }
 
 // ------------------------
@@ -52,9 +55,12 @@ void CClientBall::UnloadResources()
 
 void CClientBall::Draw()
 {
-  DrawTextureV(*m_spTexture, Vector2{ m_v2Pos.x - m_spTexture->width * 0.5f,
-    m_v2Pos.y - m_spTexture->height * 0.5f },
-    WHITE);
+  if (m_spTexture)
+  {
+    DrawTextureV(*m_spTexture, Vector2{ m_v2Pos.x - m_spTexture->width * 0.5f,
+      m_v2Pos.y - m_spTexture->height * 0.5f },
+      WHITE);
+  }
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -95,27 +101,34 @@ CGameClient::~CGameClient()
 
 // ------------------------
 
-void CGameClient::Init()
+void CGameClient::Init(bool _bLocalGame /*= false*/)
 {
   // Window creation
   //SetConfigFlags(FLAG_VSYNC_HINT);
-  InitWindow(IGame::sm_uWindowWidth, IGame::sm_uWindowHeight, "pong-dx");
-  SetTargetFPS(60);
+
+  m_bLocalGame = _bLocalGame;
+
+  if (_bLocalGame == false)
+  {
+    InitWindow(IGame::sm_uWindowWidth, IGame::sm_uWindowHeight, "pong-dx");
+    SetTargetFPS(60);
+    m_oConnectionTexture = LoadTexture("assets/connection_icon.png");
+  }
 
   // For texture loading, raylib must be initialized
-  m_oPlayerPaddle.Init();
+  m_oPlayerPaddle.Init(!_bLocalGame);
   m_oPlayerPaddle.m_aColor[0] = 0.3f;
   m_oPlayerPaddle.m_aColor[1] = 0.3f;
   m_oPlayerPaddle.m_aColor[2] = 1.0f;
 
-  m_oEnemyPaddle.Init();
+  m_oEnemyPaddle.Init(!_bLocalGame);
   m_oEnemyPaddle.m_aColor[0] = 1.0f;
   m_oEnemyPaddle.m_aColor[1] = 0.3f;
   m_oEnemyPaddle.m_aColor[2] = 0.3f;
 
   for (uint32 i = 0; i < 1; ++i)
   {
-    m_vctBalls[i].Init();
+    m_vctBalls[i].Init(!_bLocalGame);
   }
 
   if (!m_bRightHanded)
@@ -124,8 +137,6 @@ void CGameClient::Init()
     m_oPlayerPaddle.m_v2Pos = sm_v2LeftPlayerPos;
     m_oEnemyPaddle.m_v2Pos  = sm_v2RightPlayerPos;
   }
-
-  m_oConnectionTexture = LoadTexture("assets/connection_icon.png");
 }
 
 // ------------------------
@@ -192,32 +203,40 @@ void CGameClient::Resume()
 
 void CGameClient::Loop()
 {
-  m_bWantClose = WindowShouldClose();
+  //m_bWantClose = WindowShouldClose();
+  m_bWantClose = IsKeyPressed(KEY_ESCAPE);
 
-  BeginDrawing();
-  ClearBackground(BLACK);
+  const bool bWindowReady = IsWindowReady() && m_bLocalGame == false;
+  if (bWindowReady)
+  {
+    BeginDrawing();
+    ClearBackground(BLACK);
+  }
 
   (this->*m_pfncLoop)();
 
-  if (m_pNetworkClient)
+  if (bWindowReady)
   {
-    const float fPing = m_pNetworkClient->GetNetworkTime();
-    const CVector2D v2Pos{ IGame::sm_uWindowWidth * 0.01f, IGame::sm_uWindowHeight * 0.01f };
-    const float fScaleFactor = 0.05f;
-    const CVector2D v2Scale{ m_oConnectionTexture.width * fScaleFactor, m_oConnectionTexture.height * fScaleFactor };
-    DrawTextureEx(m_oConnectionTexture,
-      Vector2{ v2Pos.x, v2Pos.y },
-      0.0f, fScaleFactor, fPing < 60.0f ? GREEN : (fPing < 130.0f ? ORANGE : RED)
-    );
-    char sBuffer[8] = { '\0' };
-    sprintf(sBuffer, "%u ms", (uint32)fPing);
-    DrawText(sBuffer, 
-      v2Pos.x + v2Scale.x * 1.1f, 
-      v2Pos.y + v2Scale.y * 0.6f, 
-      GetFontDefault().baseSize, WHITE);
-  }
+    if (m_pNetworkClient)
+    {
+      const float fPing = m_pNetworkClient->GetNetworkTime();
+      const CVector2D v2Pos{ IGame::sm_uWindowWidth * 0.01f, IGame::sm_uWindowHeight * 0.01f };
+      const float fScaleFactor = 0.05f;
+      const CVector2D v2Scale{ m_oConnectionTexture.width * fScaleFactor, m_oConnectionTexture.height * fScaleFactor };
+      DrawTextureEx(m_oConnectionTexture,
+        Vector2{ v2Pos.x, v2Pos.y },
+        0.0f, fScaleFactor, fPing < 60.0f ? GREEN : (fPing < 130.0f ? ORANGE : RED)
+      );
+      char sBuffer[8] = { '\0' };
+      sprintf(sBuffer, "%u ms", (uint32)fPing);
+      DrawText(sBuffer, 
+        v2Pos.x + v2Scale.x * 1.1f, 
+        v2Pos.y + v2Scale.y * 0.6f, 
+        GetFontDefault().baseSize, WHITE);
+    }
 
-  EndDrawing();
+    EndDrawing();
+  }
 }
 
 // ------------------------
@@ -463,21 +482,22 @@ void CGameClient::LoopMainMenu()
 
 void CGameClient::LoopConnecting()
 {
-  assert(IsWindowReady() == true);
-
-  char sBuffer[16] = { "Connecting" };
-  for (uint32 i = 0; i < (uint32)std::roundf(m_fConnectingTextCount); ++i)
+  if (IsWindowReady)
   {
-    strcat(sBuffer, ".");
+    char sBuffer[16] = { "Connecting" };
+    for (uint32 i = 0; i < (uint32)std::roundf(m_fConnectingTextCount); ++i)
+    {
+      strcat(sBuffer, ".");
+    }
+    m_fConnectingTextCount += m_fTargetFrameTime;
+    m_fConnectingTextCount = std::fmodf(m_fConnectingTextCount, 3.0f + m_fTargetFrameTime);
+    const uint32 uFontSize = GetFontDefault().baseSize;
+    DrawText(sBuffer, 
+      IGame::sm_uWindowWidth / 2u - strlen("Connecting") * uFontSize * 2.5f, 
+      IGame::sm_uWindowHeight / 2u - uFontSize * 4, 
+      uFontSize * 10, 
+      WHITE);
   }
-  m_fConnectingTextCount += m_fTargetFrameTime;
-  m_fConnectingTextCount = std::fmodf(m_fConnectingTextCount, 3.0f + m_fTargetFrameTime);
-  const uint32 uFontSize = GetFontDefault().baseSize;
-  DrawText(sBuffer, 
-    IGame::sm_uWindowWidth / 2u - strlen("Connecting") * uFontSize * 2.5f, 
-    IGame::sm_uWindowHeight / 2u - uFontSize * 4, 
-    uFontSize * 10, 
-    WHITE);
 }
 
 // ------------------------

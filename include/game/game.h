@@ -17,6 +17,9 @@ public:
 
   static inline CVector2D sm_v2RightPlayerPos = { sm_uWindowWidth - 8.0f * 4.0f , sm_uWindowHeight - 32.0f * 4.0f };
   static inline CVector2D sm_v2LeftPlayerPos  = { 8.0f * 4.0f                   , 32.0f * 4.0f };
+  
+  static inline CVector2D sm_v2PaddleSize = { 16.0f, 64.0f };
+  static inline CVector2D sm_v2BallSize = { 32.0f, 32.0f };
 };
 
 struct SGameState

@@ -6,7 +6,7 @@
 
 CServerBall::CServerBall()
 {
-  m_v2Size = { 32.0f, 32.0f };
+  m_v2Size = IGame::sm_v2BallSize;
   m_v2HalfSize = m_v2Size * 0.5f;
   m_fRadius = m_v2HalfSize.x;
 

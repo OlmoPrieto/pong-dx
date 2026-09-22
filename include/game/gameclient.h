@@ -18,7 +18,7 @@ public:
   CClientBall();
   ~CClientBall();
 
-  void Init();
+  void Init(bool _bLoadTextures = true);
   void UnloadResources();
   void Draw();
 
@@ -39,7 +39,7 @@ public:
   CGameClient& operator =(const CGameClient& _oGame) = delete;
   CGameClient& operator =(CGameClient&& _oGame) = delete;
 
-  void Init();  // Initialize state, create window
+  void Init(bool _bLocalGame = false);  // Initialize state, create window
   void End();   // End game
   void Begin(CNetworkClient* _pNetworkClient, uint8 _uPlayerId); // Can start the match
   void Pause();
@@ -89,4 +89,5 @@ private:
   void (CGameClient::*m_pfncLoop)(void) = nullptr;
   float m_fConnectingTextCount = 0.0f;
   bool m_bWantClose = false;
+  bool m_bLocalGame = false;
 };

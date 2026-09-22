@@ -5,5 +5,5 @@
 [ ] When connecting to a game, send the dimensions of the paddle, ball, etc?
 [ ] Keep the ball with high speed in the begining and speed it up the more you return the ball. Keep track of the bounces with the paddles. Invent a formula to not accelerate much first and then speed it up.
 [ ] Make the front borders of the paddle round and give different effect to the ball when colliding with it.
-[x] When disconnecting and connecting again, but chaning order (connecting first on client 1), there is a missmatch on the paddle settings. Revise it.
 [ ] Change m_bWantClose to call a function that apart from closing, notifies the server that the game has ended (and it notifies the other client).
+[ ] Adjust the vertical acceleration of the ball to tie it with its horizontal velocity (to not give the ball too much effect when the ball travels slow because it's quite ridiculous).

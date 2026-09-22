@@ -11,7 +11,7 @@
 
 CServerPaddle::CServerPaddle()
 {
-  m_v2Size = { 16.0f, 64.0f };
+  m_v2Size = IGame::sm_v2PaddleSize;
   m_v2HalfSize = m_v2Size * 0.5f;
 }
 

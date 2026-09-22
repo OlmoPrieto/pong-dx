@@ -12,7 +12,7 @@ public:
   CNetworkClient(char* _sIp, uint16 _uPort);
   ~CNetworkClient();
 
-  void Init();
+  void Init(bool _bLocalGame = false);
   void Connect();
   void Update();
   void SetIp(char* _sIp);

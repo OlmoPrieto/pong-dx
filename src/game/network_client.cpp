@@ -22,9 +22,9 @@ CNetworkClient::~CNetworkClient()
 
 // ------------------------
 
-void CNetworkClient::Init()
+void CNetworkClient::Init(bool _bLocalGame /*= false*/)
 {
-  m_oGameClient.Init();
+  m_oGameClient.Init(_bLocalGame);
 }
 
 // ------------------------

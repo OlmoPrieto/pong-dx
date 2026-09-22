@@ -101,19 +101,6 @@ void CNetworkServer::Update()
               
 
               // TODO: implement a matching system (?).
-              /*uint32 uConnectedClients = 0;
-              uint32 auClientsIds[2] = { UINT32_MAX, UINT32_MAX };
-              for (uint32 i = 0; i < m_vctClients.size(); ++i)
-              {
-                if (uConnectedClients == 2)
-                  break;
-
-                if (m_vctClients[i]->m_bGameStarted == false)
-                {
-                  m_vctClients[i]->m_pGameServer = &oGameServer;
-                  auClientsIds[uConnectedClients++] = i;
-                }
-              }*/
               CClientConnection* pClient0 = m_vctClientsQueue.front();
               pClient0->m_pGameServer = &oGameServer;
               m_vctClientsQueue.pop_front();
@@ -173,19 +160,8 @@ void CNetworkServer::Update()
             assert(uClientId != UINT8_MAX);
             
             // Look for the client connection that sent the message
-            // ---------------
-            /*uint32 uClientConnectionIndex = 0;
-            for (; uClientConnectionIndex < m_vctClients.size(); ++uClientConnectionIndex)
-            {
-              if (oEvent.peer->data == m_vctClients[uClientConnectionIndex])
-              {
-                break;
-              }
-            }*/
-            // --
             assert(oEvent.peer->data != nullptr);
             CClientConnection* pClientConnection = static_cast<CClientConnection*>(oEvent.peer->data);
-            // ---------------
 
             CVector2D v2PlayerPos;
             ReadFloat32(&oStream, ((&v2PlayerPos.x) + 0));
@@ -215,19 +191,8 @@ void CNetworkServer::Update()
             // TODO: handle pause requests limit per player
 
             // Look for the client connection that sent the message
-            // ---------------
-            /*uint32 uClientConnectionIndex = 0;
-            for (; uClientConnectionIndex < m_vctClients.size(); ++uClientConnectionIndex)
-            {
-              if (oEvent.peer->data == m_vctClients[uClientConnectionIndex])
-              {
-                break;
-              }
-            }*/
-            // --
             assert(oEvent.peer->data != nullptr);
             CClientConnection* pClientConnection = static_cast<CClientConnection*>(oEvent.peer->data);
-            // ---------------
 
 
             //CGameServer* pGameServer = m_vctClients[uClientConnectionIndex]->m_pGameServer;
@@ -265,19 +230,8 @@ void CNetworkServer::Update()
             assert(uClientId != UINT8_MAX);
 
             // Look for the client connection that sent the message
-            // ---------------
-            /*uint32 uClientConnectionIndex = 0;
-            for (; uClientConnectionIndex < m_vctClients.size(); ++uClientConnectionIndex)
-            {
-              if (oEvent.peer->data == m_vctClients[uClientConnectionIndex])
-              {
-                break;
-              }
-            }*/
-            // --
             assert(oEvent.peer->data != nullptr);
             CClientConnection* pClientConnection = static_cast<CClientConnection*>(oEvent.peer->data);
-            // ---------------
 
             CGameServer* pGameServer = pClientConnection->m_pGameServer;
             if (pGameServer->SetPause(false, uClientId))

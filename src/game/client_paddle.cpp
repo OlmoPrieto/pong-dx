@@ -30,17 +30,21 @@ CClientPaddle::~CClientPaddle()
 
 // ------------------------
 
-void CClientPaddle::Init()
+void CClientPaddle::Init(bool _bLoadTextures /*= true*/)
 {
   assert(!m_spTexture);
-  if (!m_spTexture)
+  if (_bLoadTextures && !m_spTexture)
   {
     m_spTexture = std::make_shared<Texture2D>(LoadTexture("assets/paddle_basic.png"));
 
-    m_v2Size.x = m_spTexture->width;
-    m_v2Size.y = m_spTexture->height;
-    m_v2HalfSize = m_v2Size * 0.5f;
+    m_v2Size = { (float)m_spTexture->width, (float)m_spTexture->height };
   }
+  else
+  {
+    m_v2Size = IGame::sm_v2PaddleSize;
+  }
+  
+  m_v2HalfSize = m_v2Size * 0.5f;
 }
 
 // ------------------------
@@ -54,11 +58,14 @@ void CClientPaddle::Update(float _fDt)
 
 void CClientPaddle::Draw()
 {
-  DrawTextureEx(*m_spTexture.get(),
-    Vector2{ m_v2Pos.x - m_v2HalfSize.x,
-      m_v2Pos.y - m_v2HalfSize.y },
-    0.0f, 1.0f, Color({ (byte)(m_aColor[0] * 255.0f), 
-      (byte)(m_aColor[1] * 255.0f), (byte)(m_aColor[2] * 255.0f), 255 }));
+  if (m_spTexture.get())
+  {
+    DrawTextureEx(*m_spTexture.get(),
+      Vector2{ m_v2Pos.x - m_v2HalfSize.x,
+        m_v2Pos.y - m_v2HalfSize.y },
+      0.0f, 1.0f, Color({ (byte)(m_aColor[0] * 255.0f), 
+        (byte)(m_aColor[1] * 255.0f), (byte)(m_aColor[2] * 255.0f), 255 }));
+  }
 }
 
 // ------------------------
