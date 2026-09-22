@@ -91,7 +91,8 @@ void CServerPaddle::CheckCollisions(CServerBall* _pBall)
     //  add a bit of velocity depending on the friction with the paddle
     const float fBallXVelocity = m_v2BallStoredVelocity.x;
     float fSpeedX = _pBall->m_v2Pos.x > CGameServer::sm_uWindowWidth * 0.5f ? -fBallXVelocity : fBallXVelocity;
-    fSpeedX *= 1.025f; // Always increase speed a little on each hit
+    //fSpeedX *= 1.025f; // Always increase speed a little on each hit || Original
+    fSpeedX *= 1.01f;
     const float fMaxDisplacement = m_v2Size.x * 3.0f;
     const float fClampedPaddlePosDiff = Clamp(fPosDiff, -fMaxDisplacement, fMaxDisplacement);
 

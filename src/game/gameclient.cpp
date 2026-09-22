@@ -333,7 +333,7 @@ void CGameClient::SendInput()
   WriteFloat32(&oStream, m_oPlayerPaddle.m_v2Pos.x);
   WriteFloat32(&oStream, m_oPlayerPaddle.m_v2Pos.y);
 
-  m_pNetworkClient->Send(&oStream, EMsgPriority::HIGH);
+  m_pNetworkClient->Send(&oStream, EMsgPriority::LOW);
 }
 
 // ------------------------

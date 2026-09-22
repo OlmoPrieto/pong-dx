@@ -12,8 +12,8 @@ CServerBall::CServerBall()
 
   m_v2Pos = { IGame::sm_uWindowWidth / 2u, IGame::sm_uWindowHeight / 2u - 100.0f };
 
-  m_v2Velocity.x = GetRandomValue(100.0f, 300.0f);
-  m_v2Velocity.y = GetRandomValue(100.0f, 150.0f);
+  m_v2Velocity.x = GetRandomValue(500.0f, 300.0f);
+  m_v2Velocity.y = GetRandomValue(500.0f, 150.0f);
 
   //m_fSpeed = 5.0f;
 }
