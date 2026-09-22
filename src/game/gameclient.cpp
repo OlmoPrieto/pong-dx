@@ -85,6 +85,8 @@ CGameClient::~CGameClient()
     m_vctBalls[i].UnloadResources();
   }
 
+  UnloadTexture(m_oConnectionTexture);
+
   if (m_bWantClose)
   {
     CloseWindow();
@@ -122,6 +124,8 @@ void CGameClient::Init()
     m_oPlayerPaddle.m_v2Pos = sm_v2LeftPlayerPos;
     m_oEnemyPaddle.m_v2Pos  = sm_v2RightPlayerPos;
   }
+
+  m_oConnectionTexture = LoadTexture("assets/connection_icon.png");
 }
 
 // ------------------------
@@ -194,6 +198,24 @@ void CGameClient::Loop()
   ClearBackground(BLACK);
 
   (this->*m_pfncLoop)();
+
+  if (m_pNetworkClient)
+  {
+    const float fPing = m_pNetworkClient->GetNetworkTime();
+    const CVector2D v2Pos{ IGame::sm_uWindowWidth * 0.01f, IGame::sm_uWindowHeight * 0.01f };
+    const float fScaleFactor = 0.05f;
+    const CVector2D v2Scale{ m_oConnectionTexture.width * fScaleFactor, m_oConnectionTexture.height * fScaleFactor };
+    DrawTextureEx(m_oConnectionTexture,
+      Vector2{ v2Pos.x, v2Pos.y },
+      0.0f, fScaleFactor, fPing < 60.0f ? GREEN : (fPing < 130.0f ? ORANGE : RED)
+    );
+    char sBuffer[8] = { '\0' };
+    sprintf(sBuffer, "%u ms", (uint32)fPing);
+    DrawText(sBuffer, 
+      v2Pos.x + v2Scale.x * 1.1f, 
+      v2Pos.y + v2Scale.y * 0.6f, 
+      GetFontDefault().baseSize, WHITE);
+  }
 
   EndDrawing();
 }

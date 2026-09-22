@@ -200,6 +200,13 @@ bool CNetworkClient::Send(SNetStream* _pStream, EMsgPriority _eMsgPriority)
 
 // ------------------------
 
+float CNetworkClient::GetNetworkTime() const
+{
+  return m_pServerPeer ? m_pServerPeer->roundTripTime : -1.0f;
+}
+
+// ------------------------
+
 
 
 // ------------------------

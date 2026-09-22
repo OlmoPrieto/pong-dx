@@ -18,6 +18,7 @@ public:
   void SetIp(char* _sIp);
   bool WantClose() const { return m_bWantClose; }
   bool Send(SNetStream* _pStream, EMsgPriority _eMsgPriority);
+  float GetNetworkTime() const;
 
 private:
   CGameClient m_oGameClient;

@@ -73,6 +73,7 @@ private:
 
   friend class CNetworkClient;
 
+  Texture2D m_oConnectionTexture;
   SGameState m_oGameState;
   SGameState m_oPrevGameState;
   std::vector<CClientBall> m_vctBalls;
